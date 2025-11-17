@@ -1,0 +1,46 @@
+<!-- html/posts.html -->
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>게시판 | 아무 말 대잔치</title>
+    <link rel="stylesheet" href="../css/posts.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="header-title">아무 말 대잔치</h1>
+      <div class="header-profile"></div>
+    </header>
+
+    <main class="container">
+      <div class="board-wrapper">
+        <!-- 인사말 + 게시글 작성 버튼 -->
+        <section class="board-intro">
+          <p class="board-intro-text">
+            안녕하세요,<br />
+            아무 말 대잔치 <span class="bold">게시판</span> 입니다.
+          </p>
+          <button
+            id="go-write-btn"
+            class="primary-btn write-btn"
+            type="button"
+          >
+            게시글 작성
+          </button>
+        </section>
+
+        <!-- 게시글 목록 -->
+        <section id="post-list" class="post-list">
+          <!-- JS에서 카드들 동적으로 채움 -->
+        </section>
+
+        <!-- 게시글이 없을 때 메세지 -->
+        <p id="empty-text" class="empty-text hidden">
+          등록된 게시글이 없습니다.
+        </p>
+      </div>
+    </main>
+
+    <script type="module" src="../js/posts.js"></script>
+  </body>
+</html>
