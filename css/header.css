@@ -11,6 +11,7 @@
   position: relative;
   background-color: #ffffff;
   box-sizing: border-box;
+  padding: 0 16px; /* 좌우 여백 추가로 모바일에서도 여유 공간 */
 }
 
 .global-header-title {
@@ -19,9 +20,10 @@
   margin: 0;
 }
 
+/* 우측 프로필 버튼 */
 .header-profile-wrapper {
   position: absolute;
-  right: 40px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
 }

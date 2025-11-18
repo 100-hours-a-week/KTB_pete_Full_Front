@@ -1,6 +1,7 @@
 /* css/post-detail.css */
 @import url("./auth-common.css");
 @import url("./header.css");
+
 /* 기본 */
 body {
   margin: 0;
@@ -8,58 +9,15 @@ body {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
     sans-serif;
   background: #f5f5f5;
-  width: 1920px;
-  height: 1080px;
-}
-
-/* 헤더 */
-.header {
-  width: 100%;
-  height: 100px;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: #ffffff;
-}
-
-.header-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.header-profile {
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #cccccc;
-}
-
-/* 뒤로가기 버튼 */
-.back-btn {
-  position: absolute;
-  left: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  cursor: pointer;
 }
 
 /* 메인 컨테이너 */
 .detail-container {
-  width: 700px;
+  width: 100%;
+  max-width: 700px;
   margin: 32px auto 80px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 /* 제목/작성자 영역 */
@@ -77,6 +35,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .post-author {
@@ -148,6 +108,13 @@ body {
   margin-bottom: 16px;
 }
 
+.post-image-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
 .post-content {
   font-size: 14px;
   line-height: 1.6;
@@ -160,10 +127,12 @@ body {
   margin-top: 24px;
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .stat-card {
   flex: 1;
+  min-width: 100px;
   height: 70px;
   border-radius: 16px;
   background: #f2f2f2;
@@ -320,7 +289,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5); /* 50% 블랙 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -329,6 +298,7 @@ body {
 
 .modal-card {
   width: 408px;
+  max-width: 90%;
   padding: 32px;
   border-radius: 24px;
   background: #ffffff;
@@ -377,15 +347,7 @@ body {
   display: none;
 }
 
-.post-image-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
 /* 모달 열렸을 때 body 스크롤 막기 */
 body.modal-open {
   overflow: hidden;
 }
-

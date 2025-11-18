@@ -2,6 +2,7 @@
 import { initHeader } from "./header.js";
 
 initHeader();
+
 // ------------------------------
 // 개발 플래그
 // ------------------------------
@@ -36,8 +37,7 @@ const mockPostDetail = {
   author: "더미 작성자 1",
   createdAt: "2021-01-01T00:00:00",
   content:
-    "무엇을 얘기할까요? 아무말이라면, 실은 항상 불편한 말일이라고 생각합니다. 우리는 매일 새로운 경험을 하고 매번 성장합니다. 때로는 어려움을 겪으며 아플 때도 있지만, 그것들이 우리의 한 걸음을 내딛게 하는 동력이 되기도 합니다.\n\n우리는 언제나 주변과 관계 맺으며 살아가고, 때로는 그 안에서 작은 위로와 즐거움을 찾습니다.",
-  // 더미 이미지 경로
+    "무엇을 얘기할까요? 아무말이라면, 실은 항상 불편한 말일이라 생각합니다. 우리는 매일 새로운 경험을 하고 매번 성장합니다. 때로는 어려움을 겪으며 아플 때도 있지만, 그것들이 우리의 한 걸음을 내딛게 하는 동력이 되기도 합니다.\n\n우리는 언제나 주변과 관계 맺으며 살아가고, 때로는 그 안에서 작은 위로와 즐거움을 찾습니다.",
   imageUrl: "../img/dummy.png",
   likeCount: 123,
   isLiked: false,
@@ -45,7 +45,7 @@ const mockPostDetail = {
   commentCount: 123,
 };
 
-// 댓글 더미 데이터 여러 개 (페이지 단위로 나눠져 있다고 가정)
+// 댓글 더미 데이터
 const mockCommentsPages = [
   [
     {
@@ -83,7 +83,6 @@ const mockCommentsPages = [
   ],
 ];
 
-// 실제 로딩된 댓글들을 저장 (수정/삭제용)
 let loadedComments = [];
 
 // ------------------------------
@@ -94,8 +93,8 @@ const postTitleEl = document.getElementById("post-title");
 const postAuthorNameEl = document.getElementById("post-author-name");
 const postCreatedAtEl = document.getElementById("post-created-at");
 const postContentEl = document.getElementById("post-content");
-const postImageEl = document.getElementById("post-image"); // 래퍼 div
-const postImageTag = document.getElementById("post-image-tag"); // img 태그
+const postImageEl = document.getElementById("post-image");
+const postImageTag = document.getElementById("post-image-tag");
 
 const likeBtn = document.getElementById("like-btn");
 const likeCountEl = document.getElementById("like-count");
@@ -133,10 +132,8 @@ let commentPageSize = 5;
 let commentLastPage = false;
 let commentLoading = false;
 
-// 현재 수정 중인 댓글 ID (없으면 null)
+// 현재 수정/삭제 중인 댓글
 let editingCommentId = null;
-
-// 삭제 대상 댓글 ID
 let deletingCommentId = null;
 
 // ------------------------------
@@ -155,7 +152,6 @@ function formatDateTime(isoString) {
   return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
 }
 
-// 1,000 이상 → 1k, 10,000 이상 → 10k, 100,000 이상 → 100k
 function formatCount(count) {
   if (count >= 100000) return "100k";
   if (count >= 10000) return "10k";
@@ -172,7 +168,6 @@ async function loadPostDetail() {
     return;
   }
 
-  // 실제 API 연결 시
   try {
     const res = await fetch(
       `http://localhost:8080/board/posts/${encodeURIComponent(postId)}`
@@ -184,7 +179,6 @@ async function loadPostDetail() {
       return;
     }
 
-    // 백엔드 응답 구조에 맞게 매핑 필요
     const detail = {
       id: data.id,
       title: data.title,
@@ -205,7 +199,6 @@ async function loadPostDetail() {
   }
 }
 
-// ★ 여기 함수가 수정된 부분
 function renderPostDetail(detail) {
   postTitleEl.textContent = detail.title;
   postAuthorNameEl.textContent = detail.author;
@@ -221,7 +214,6 @@ function renderPostDetail(detail) {
   viewCountEl.textContent = formatCount(currentViewCount);
   commentCountEl.textContent = formatCount(totalCommentCount);
 
-  // ---- 이미지 처리: img 태그 사용 ----
   if (detail.imageUrl) {
     postImageTag.src = detail.imageUrl;
     postImageTag.classList.remove("hidden");
@@ -229,7 +221,6 @@ function renderPostDetail(detail) {
     postImageTag.src = "";
     postImageTag.classList.add("hidden");
   }
-  // -----------------------------------
 
   updateLikeButtonStyle();
 }
@@ -260,7 +251,6 @@ async function toggleLike() {
     return;
   }
 
-  // 실제 API 연결 시
   try {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -328,7 +318,6 @@ function createCommentCard(comment) {
     </div>
   `;
 
-  // 수정
   const editBtn = card.querySelector(".edit-btn");
   editBtn.addEventListener("click", () => {
     editingCommentId = id;
@@ -338,7 +327,6 @@ function createCommentCard(comment) {
     submitCommentBtn.classList.remove("disabled");
   });
 
-  // 삭제
   const deleteBtn = card.querySelector(".delete-btn");
   deleteBtn.addEventListener("click", () => {
     deletingCommentId = id;
@@ -379,7 +367,6 @@ async function loadComments(page) {
     return;
   }
 
-  // 실제 API 연결 시
   try {
     const res = await fetch(
       `http://localhost:8080/board/posts/${encodeURIComponent(
@@ -414,12 +401,12 @@ async function loadComments(page) {
   }
 }
 
-// 스크롤 이벤트 (페이지 전체 스크롤 기준)
+// 스크롤 이벤트
 function handleScroll() {
   if (commentLoading || commentLastPage) return;
 
   const scrollPosition = window.scrollY + window.innerHeight;
-  const threshold = document.body.offsetHeight - 150; // 바닥 근접
+  const threshold = document.body.offsetHeight - 150;
   if (scrollPosition >= threshold) {
     loadComments(commentPage + 1);
   }
@@ -434,7 +421,6 @@ async function submitComment() {
 
   if (USE_MOCK_DETAIL) {
     if (editingCommentId == null) {
-      // 새 댓글
       const newComment = {
         id: Date.now(),
         author: "나 (더미)",
@@ -446,7 +432,6 @@ async function submitComment() {
       totalCommentCount += 1;
       commentCountEl.textContent = formatCount(totalCommentCount);
     } else {
-      // 수정
       const target = loadedComments.find((c) => c.id === editingCommentId);
       if (target) {
         target.content = text;
@@ -460,7 +445,6 @@ async function submitComment() {
       }
     }
 
-    // 입력 초기화
     editingCommentId = null;
     commentInputEl.value = "";
     submitCommentBtn.textContent = "댓글 등록";
@@ -469,7 +453,6 @@ async function submitComment() {
     return;
   }
 
-  // 실제 API 연결
   try {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -478,7 +461,6 @@ async function submitComment() {
     }
 
     if (editingCommentId == null) {
-      // 새 댓글 작성
       const res = await fetch(
         `http://localhost:8080/board/posts/${encodeURIComponent(
           postId
@@ -510,7 +492,6 @@ async function submitComment() {
       totalCommentCount += 1;
       commentCountEl.textContent = formatCount(totalCommentCount);
     } else {
-      // 댓글 수정
       const res = await fetch(
         `http://localhost:8080/board/comments/${encodeURIComponent(
           editingCommentId
@@ -544,7 +525,6 @@ async function submitComment() {
       }
     }
 
-    // 입력 초기화
     editingCommentId = null;
     commentInputEl.value = "";
     submitCommentBtn.textContent = "댓글 등록";
@@ -620,7 +600,6 @@ async function deleteComment() {
 // ------------------------------
 async function deletePost() {
   if (USE_MOCK_DETAIL) {
-    // 그냥 목록으로 이동
     closeModal(postDeleteModal);
     alert("개발용: 게시글이 삭제되었다고 가정하고 목록으로 이동합니다.");
     window.location.href = "./posts.html";
@@ -659,7 +638,7 @@ async function deletePost() {
 }
 
 // ------------------------------
-// 모달 열고/닫기 (배경 스크롤 막기 포함)
+// 모달 열고/닫기
 // ------------------------------
 function openModal(modalEl) {
   modalEl.classList.remove("hidden");
@@ -692,12 +671,10 @@ commentInputEl.addEventListener("input", () => {
 
 submitCommentBtn.addEventListener("click", submitComment);
 
-// 게시글 수정 (지금은 알림만, 나중에 수정 페이지로 이동)
 editPostBtn.addEventListener("click", () => {
   window.location.href = `./post-edit.html?postId=${postId}`;
 });
 
-// 게시글 삭제 모달
 deletePostBtn.addEventListener("click", () => {
   openModal(postDeleteModal);
 });
@@ -708,7 +685,6 @@ cancelPostDeleteBtn.addEventListener("click", () => {
 
 confirmPostDeleteBtn.addEventListener("click", deletePost);
 
-// 댓글 삭제 모달
 cancelCommentDeleteBtn.addEventListener("click", () => {
   deletingCommentId = null;
   closeModal(commentDeleteModal);
@@ -716,7 +692,6 @@ cancelCommentDeleteBtn.addEventListener("click", () => {
 
 confirmCommentDeleteBtn.addEventListener("click", deleteComment);
 
-// 댓글 무한 스크롤 (페이지 전체 기준)
 window.addEventListener("scroll", handleScroll);
 
 // ------------------------------
