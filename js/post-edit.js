@@ -1,5 +1,7 @@
 // js/post-edit.js
+import { initHeader } from "./header.js";
 
+initHeader();
 // ------------------------------
 // 개발 플래그
 // ------------------------------

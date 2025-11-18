@@ -1,7 +1,7 @@
 /* css/post-create.css */
 /* 필요하면 공통 스타일 파일을 import (로그인/회원가입이랑 맞추는 용도) */
 @import url("./auth-common.css");
-
+@import url("./header.css");
 body {
   margin: 0;
   padding: 0;

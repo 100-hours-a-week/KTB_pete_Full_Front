@@ -1,6 +1,6 @@
 /* css/post-detail.css */
 @import url("./auth-common.css");
-
+@import url("./header.css");
 /* 기본 */
 body {
   margin: 0;

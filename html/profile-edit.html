@@ -1,0 +1,149 @@
+<!-- html/profile-edit.html -->
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원정보 수정 | 아무 말 대잔치</title>
+    <link rel="stylesheet" href="../css/profile-edit.css" />
+  </head>
+  <body>
+    <!-- 공통 헤더 -->
+    <header class="global-header">
+      <h1 class="global-header-title">아무 말 대잔치</h1>
+
+      <div class="header-profile-wrapper">
+        <button
+          id="header-profile-btn"
+          class="header-profile-btn"
+          type="button"
+        >
+          <img
+            src="../img/dummy.png"
+            alt="프로필"
+            class="header-profile-img"
+          />
+        </button>
+
+        <div id="profile-dropdown" class="profile-dropdown hidden">
+          <button
+            type="button"
+            class="dropdown-item"
+            data-action="edit-profile"
+          >
+            회원정보수정
+          </button>
+          <button
+            type="button"
+            class="dropdown-item"
+            data-action="change-password"
+          >
+            비밀번호수정
+          </button>
+          <button type="button" class="dropdown-item" data-action="logout">
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="profile-edit-container">
+      <h2 class="page-title">회원정보수정</h2>
+
+      <!-- 프로필 이미지 -->
+      <section class="profile-image-section">
+        <p class="profile-image-label">프로필 사진*</p>
+
+        <div class="profile-image-wrapper">
+          <img
+            id="profile-image"
+            class="profile-image"
+            src="../assets/profile-sample.png"
+            alt="프로필 이미지"
+          />
+          <button
+            id="profile-image-change-btn"
+            class="profile-image-change-btn"
+            type="button"
+          >
+            변경
+          </button>
+          <input
+            id="profile-image-input"
+            class="hidden"
+            type="file"
+            accept="image/*"
+          />
+        </div>
+      </section>
+
+      <!-- 이메일 + 닉네임 -->
+      <section class="profile-form-section">
+        <label for="email-input" class="form-label">이메일</label>
+        <input
+          id="email-input"
+          class="text-input"
+          type="email"
+          readonly
+        />
+
+        <label for="nickname-input" class="form-label">닉네임</label>
+        <input
+          id="nickname-input"
+          class="text-input"
+          type="text"
+          maxlength="10"
+          placeholder="닉네임을 입력해주세요."
+        />
+        <p id="nickname-helper" class="helper-text"></p>
+      </section>
+
+      <!-- 버튼들 -->
+      <section class="profile-button-section">
+        <button
+          id="profile-save-btn"
+          class="primary-btn"
+          type="button"
+        >
+          수정하기
+        </button>
+
+        <button
+          id="withdraw-btn"
+          class="withdraw-btn"
+          type="button"
+        >
+          회원 탈퇴
+        </button>
+      </section>
+
+      <!-- 수정 완료 토스트 -->
+      <div id="profile-toast" class="toast hidden">수정 완료</div>
+    </main>
+
+    <!-- 회원 탈퇴 모달 (오버레이) -->
+    <div id="withdraw-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <h3 class="modal-title">회원탈퇴 하시겠습니까?</h3>
+        <p class="modal-message">작성된 게시글과 댓글은 삭제됩니다.</p>
+        <div class="modal-actions">
+          <button
+            type="button"
+            id="withdraw-cancel-btn"
+            class="modal-btn modal-cancel-btn"
+          >
+            취소
+          </button>
+          <button
+            type="button"
+            id="withdraw-confirm-btn"
+            class="modal-btn modal-confirm-btn"
+          >
+            확인
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../js/profile-edit.js"></script>
+  </body>
+</html>

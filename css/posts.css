@@ -1,4 +1,6 @@
 /* 공통 */
+@import url("./header.css");
+@import url("./auth-common.css");
 body {
   margin: 0;
   padding: 0;

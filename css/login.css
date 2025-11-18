@@ -1,6 +1,6 @@
 /* css/login.css */
 @import url("./auth-common.css");
-
+@import url("./header.css");
 /* 로그인 박스만 약간 조정이 필요하면 여기서 */
 
 body {

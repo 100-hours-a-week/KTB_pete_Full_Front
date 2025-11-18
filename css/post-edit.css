@@ -1,6 +1,6 @@
 /* css/post-edit.css */
 @import url("./auth-common.css");
-
+@import url("./header.css");
 body {
   margin: 0;
   padding: 0;
