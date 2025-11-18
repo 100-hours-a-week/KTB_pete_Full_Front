@@ -79,6 +79,17 @@ body {
   cursor: pointer;
 }
 
+/* 마우스 올렸을 때: 7F6AEE */
+.write-btn:hover {
+  background-color: #7f6aee;
+}
+
+/* 포커스(키보드 탭) 시에도 같은 느낌 주고 싶으면 옵션 */
+.write-btn:focus-visible {
+  outline: none;
+  background-color: #7f6aee;
+}
+
 /* 게시글 목록 */
 .post-list {
   width: 620px;

@@ -1,0 +1,189 @@
+/* css/post-edit.css */
+@import url("./auth-common.css");
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+    sans-serif;
+  background: #f5f5f5;
+  width: 1920px;
+  height: 1080px;
+}
+
+/* 헤더 */
+.header {
+  width: 100%;
+  height: 100px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #ffffff;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-profile {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #cccccc;
+}
+
+.back-btn {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* 메인 */
+.edit-container {
+  width: 700px;
+  margin: 32px auto 80px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.required {
+  color: #ff4d4f;
+  margin-left: 2px;
+}
+
+.text-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #dddddd;
+  padding: 0 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #aca0eb;
+}
+
+.textarea-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #dddddd;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.textarea-input:focus {
+  outline: none;
+  border-color: #aca0eb;
+}
+
+.helper-row {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #999999;
+}
+
+/* 파일 업로드 */
+.file-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  height: 32px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-name {
+  font-size: 13px;
+  color: #666666;
+}
+
+/* 버튼 */
+.button-section {
+  margin-top: 16px;
+  align-items: center;
+}
+
+.primary-btn {
+  width: 100%;
+  max-width: 600px;
+  height: 40px;
+  border-radius: 16px;
+  border: none;
+  background: #aca0eb;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.primary-btn.disabled {
+  background: #f6f6f6;
+  color: #b5b5b5;
+  cursor: default;
+}
+
+/* 공통 */
+.hidden {
+  display: none;
+}

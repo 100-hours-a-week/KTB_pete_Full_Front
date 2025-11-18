@@ -289,11 +289,12 @@ postListEl.addEventListener("scroll", handleScroll);
 // ------------------------------
 // 게시글 작성 버튼 클릭
 // ------------------------------
-goWriteBtn.addEventListener("click", () => {
-  // TODO: 실제 작성 페이지 경로로 변경
-  window.location.href = "./write.html";
-});
-
+if (goWriteBtn) {
+  goWriteBtn.addEventListener("click", () => {
+    // posts.html과 post-create.html 둘 다 html 폴더 안에 있으니까 ./ 상대 경로
+    window.location.href = "./post-create.html";
+  });
+}
 // ------------------------------
 // 초기 로딩
 // ------------------------------
