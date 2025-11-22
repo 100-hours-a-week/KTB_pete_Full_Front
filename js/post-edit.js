@@ -1,20 +1,11 @@
 // js/post-edit.js
 import { initHeader } from "./header.js";
+import { apiFetch } from "./api-fetch.js";
 
 initHeader();
-// ------------------------------
-// 개발 플래그
-// ------------------------------
-const USE_MOCK_EDIT = true; // true면 더미 데이터로만 동작
-const USE_LOGIN_GUARD = false;
 
-if (USE_LOGIN_GUARD) {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    alert("로그인 후 이용해주세요.");
-    window.location.href = "./login.html";
-  }
-}
+// 🔑 create 쪽에서 FormData에 쓰고 있는 필드 이름과 꼭 맞추기!
+const IMAGE_FIELD_NAME = "imageFile"; // create에서 imageFile 쓰고 있으면 그대로 이 값 사용
 
 // ------------------------------
 // postId
@@ -25,7 +16,11 @@ function getPostIdFromQuery() {
   return id ? Number(id) : null;
 }
 
-const postId = getPostIdFromQuery() ?? 1;
+const postId = getPostIdFromQuery();
+if (!postId) {
+  alert("잘못된 접근입니다. 게시글 ID가 없습니다.");
+  window.location.href = "./posts.html";
+}
 
 // ------------------------------
 // DOM
@@ -38,26 +33,20 @@ const imageInput = document.getElementById("image-input");
 const fileNameText = document.getElementById("file-name");
 const submitBtn = document.getElementById("submit-edit-btn");
 
-// 현재 파일
-let selectedFile = null;
-
 // ------------------------------
-// 더미 기존 게시글 데이터 (상세 페이지와 동일 값)
+// 상태
 // ------------------------------
-const mockExistingPost = {
-  id: postId,
-  title: "제목 1",
-  content:
-    "무엇을 얘기할까요? 아무말이라면, 실은 항상 놀라운 모험이라고 생각합니다. 우리는 매일 새로운 경험을 하고 매번 성장합니다. 때로는 어려움과 도전이 있지만, 그것들이 우리를 더 강하고 지혜롭게 만듭니다. 또한 우리는 주변의 사람들과 연결되며 사랑과 지지를 받습니다. 그래서 우리의 삶은 소중하고 의미가 있습니다.\n\n자연도 아름다운 이야기입니다. 우리 주변의 자연은 끝없는 아름다움과 신비로움을 담고 있습니다. 바다, 산, 하늘 등 모든 곳에 우리의 관심과 감탄을 불러일으킵니다. 자연은 우리의 일상 속 안정과 치유의 힘을 주며, 우리는 그 안에서 위로를 찾곤 합니다.",
-  imageUrl: "../img/post-dummy.png", // 상세 페이지와 동일
-};
+let selectedFile = null;      // 새로 선택한 파일
+let existingImageUrl = null;  // 기존 이미지 URL (백엔드에서 받은 값)
 
 // ------------------------------
 // 유틸
 // ------------------------------
 function updateTitleLength() {
   const len = titleInput.value.length;
-  titleLength.textContent = `${len} / 26`;
+  if (titleLength) {
+    titleLength.textContent = `${len} / 26`;
+  }
 }
 
 function validateForm() {
@@ -72,45 +61,63 @@ function validateForm() {
   } else {
     submitBtn.classList.add("disabled");
   }
+
+  return canSubmit;
+}
+
+// 파일명만 예쁘게 뽑고 싶으면 사용
+function extractFileNameFromUrl(url) {
+  if (!url) return "";
+  try {
+    const parts = url.split("/");
+    return parts[parts.length - 1] || url;
+  } catch {
+    return url;
+  }
 }
 
 // ------------------------------
-// 기존 데이터 불러오기
+// 기존 게시글 불러오기
 // ------------------------------
 async function loadExistingPost() {
-  if (USE_MOCK_EDIT) {
-    applyExistingPost(mockExistingPost);
-    return;
-  }
-
   try {
-    const res = await fetch(
-      `http://localhost:8080/board/posts/${encodeURIComponent(postId)}`
+    // GET /board/posts/{postId}
+    const detail = await apiFetch(
+      `/board/posts/${encodeURIComponent(postId)}`,
+      {
+        method: "GET",
+        includeAuth: false, // 상세 조회는 비로그인도 가능
+      }
     );
-    const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.message || "게시글 정보를 불러오지 못했습니다.");
-      return;
-    }
-
+    // detail = PostResponse.result
     const existing = {
-      id: data.id,
-      title: data.title,
-      content: data.content,
-      imageUrl: data.imageUrl,
+      id: detail.id,
+      title: detail.title,
+      content: detail.content,
+      imageUrl: detail.image, // 백엔드 필드명이 image라고 가정
     };
+
     applyExistingPost(existing);
   } catch (err) {
     console.error(err);
-    alert("서버 오류가 발생했습니다.");
+    alert(err.message || "게시글 정보를 불러오지 못했습니다.");
+    window.location.href = "./posts.html";
   }
 }
 
 function applyExistingPost(post) {
   titleInput.value = post.title ?? "";
   contentInput.value = post.content ?? "";
-  fileNameText.textContent = "기존 파일 명";
+  existingImageUrl = post.imageUrl ?? null;
+
+  // 기존 파일명이 있다면 파일명만 표시
+  if (existingImageUrl) {
+    const name = extractFileNameFromUrl(existingImageUrl);
+    fileNameText.textContent = name || "기존 파일 명";
+  } else {
+    fileNameText.textContent = "기존 파일 명";
+  }
 
   updateTitleLength();
   validateForm();
@@ -120,61 +127,44 @@ function applyExistingPost(post) {
 // 수정 요청
 // ------------------------------
 async function submitEdit() {
+  const canSubmit = validateForm();
+  if (!canSubmit) return;
+
   const title = titleInput.value.trim();
   const content = contentInput.value.trim();
-  if (!title || !content) return;
 
-  if (USE_MOCK_EDIT) {
-    console.log("수정 요청(더미):", {
-      postId,
-      title,
-      content,
-      selectedFile,
-    });
-    alert("개발용: 수정된 것으로 가정하고 상세 페이지로 이동합니다.");
-    window.location.href = `./post-detail.html?postId=${postId}`;
+  // 로그인 체크
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    alert("로그인 후 이용해주세요.");
+    window.location.href = "./login.html";
     return;
   }
 
+  // multipart/form-data
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+
+  // 새 파일을 선택한 경우에만 이미지 파트 추가
+  if (selectedFile) {
+    formData.append(IMAGE_FIELD_NAME, selectedFile);
+  }
+  // 선택 안 했으면 이미지 파트 안 보내서, 백엔드가 "기존 이미지 유지" 하도록
+
   try {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      alert("로그인 후 이용해주세요.");
-      return;
-    }
-
-    // 이미지 파일 포함이므로 FormData 사용 (multipart/form-data)
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    }
-
-    const res = await fetch(
-      `http://localhost:8080/board/posts/${encodeURIComponent(postId)}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Content-Type 은 FormData 사용 시 브라우저가 자동 설정
-        },
-        body: formData,
-      }
-    );
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      alert(data.message || "게시글 수정에 실패했습니다.");
-      return;
-    }
+    // PATCH /board/posts/{postId}
+    await apiFetch(`/board/posts/${encodeURIComponent(postId)}`, {
+      method: "PATCH",
+      body: formData,
+      // apiFetch가 FormData면 Content-Type 자동 처리, 토큰 자동 포함
+    });
 
     alert("게시글이 수정되었습니다.");
     window.location.href = `./post-detail.html?postId=${postId}`;
   } catch (err) {
     console.error(err);
-    alert("서버 오류가 발생했습니다.");
+    alert(err.message || "게시글 수정에 실패했습니다.");
   }
 }
 
@@ -186,8 +176,6 @@ backBtn.addEventListener("click", () => {
 });
 
 titleInput.addEventListener("input", () => {
-  // maxlength=26 이라서 27자 이상 입력 자체가 안 되지만
-  // 혹시 모를 붙여넣기 등 대비해서 한 번 더 잘라줌
   if (titleInput.value.length > 26) {
     titleInput.value = titleInput.value.slice(0, 26);
   }
@@ -203,11 +191,12 @@ imageInput.addEventListener("change", (e) => {
   const files = e.target.files;
   if (!files || !files.length) {
     selectedFile = null;
-    fileNameText.textContent = "기존 파일 명";
+    // 새 파일 선택 취소하면, 다시 기존 파일명으로 표시
+    const name = extractFileNameFromUrl(existingImageUrl);
+    fileNameText.textContent = name || "기존 파일 명";
     return;
   }
 
-  // 이미지 1개만
   selectedFile = files[0];
   fileNameText.textContent = selectedFile.name;
 });

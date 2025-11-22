@@ -1,15 +1,20 @@
 // js/signup.js
+import { apiFetch } from "./api-fetch.js";
 
-// 요소들
-const backBtn = document.getElementById("back-btn");
+// ===== 상수 =====
+// 백엔드에서 프로필 이미지 필드명을 뭐라고 받는지 맞춰줘야 함.
+// 예: @RequestPart("profileImage") MultipartFile profileImage
+const PROFILE_IMAGE_FIELD_NAME = "profileImage";
+
+// ===== DOM 요소 찾기 =====
 const profilePlaceholder = document.getElementById("profile-placeholder");
 const profileInput = document.getElementById("profile-input");
 const profilePreview = document.getElementById("profile-preview");
 const profileHelper = document.getElementById("profile-helper");
 
 const emailInput = document.getElementById("signup-email");
-const pwInput = document.getElementById("signup-password");
-const pwConfirmInput = document.getElementById("signup-password-confirm");
+const passwordInput = document.getElementById("signup-password");
+const passwordConfirmInput = document.getElementById("signup-password-confirm");
 const nicknameInput = document.getElementById("signup-nickname");
 
 const emailError = document.getElementById("signup-email-error");
@@ -20,246 +25,175 @@ const nicknameError = document.getElementById("signup-nickname-error");
 const signupBtn = document.getElementById("signup-btn");
 const goLoginBtn = document.getElementById("signup-go-login-btn");
 
-// 상태
-let profileFile = null;
-let isProfileValid = false;
-let isEmailValid = false;
-let isPwValid = false;
-let isPwConfirmValid = false;
-let isNicknameValid = false;
+// 실제로 서버로 전송할 파일
+let selectedProfileFile = null;
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|;:'",.<>/?]).{8,20}$/;
+// ===== 검증 유틸 =====
+function isValidEmail(value) {
+  if (!value) return false;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+}
 
-// 버튼 활성화
-function updateSignupButton() {
-  if (
-    isProfileValid &&
-    isEmailValid &&
-    isPwValid &&
-    isPwConfirmValid &&
-    isNicknameValid
-  ) {
-    signupBtn.disabled = false;
+function isValidPassword(value) {
+  if (!value) return false;
+  // 8~20자, 대문자/소문자/숫자/특수문자 각각 1개 이상
+  const pwRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|;:'",.<>/?`~]).{8,20}$/;
+  return pwRegex.test(value);
+}
+
+// ===== 폼 전체 검증 + 버튼 상태 갱신 =====
+function validateForm() {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  const passwordConfirm = passwordConfirmInput.value.trim();
+  const nickname = nicknameInput.value.trim();
+
+  let isValid = true;
+
+  // --- 이메일 ---
+  if (!email) {
+    emailError.textContent = "이메일을 입력해주세요.";
+    emailError.classList.remove("hidden");
+    isValid = false;
+  } else if (!isValidEmail(email)) {
+    emailError.textContent = "올바른 이메일 주소 형식을 입력해주세요.";
+    emailError.classList.remove("hidden");
+    isValid = false;
+  } else {
+    emailError.classList.add("hidden");
+  }
+
+  // --- 비밀번호 ---
+  if (!password) {
+    pwError.textContent = "비밀번호를 입력해주세요.";
+    pwError.classList.remove("hidden");
+    isValid = false;
+  } else if (!isValidPassword(password)) {
+    pwError.textContent =
+      "비밀번호는 8~20자이며 대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.";
+    pwError.classList.remove("hidden");
+    isValid = false;
+  } else {
+    pwError.classList.add("hidden");
+  }
+
+  // --- 비밀번호 확인 ---
+  if (!passwordConfirm) {
+    pwConfirmError.textContent = "비밀번호를 한번 더 입력해주세요.";
+    pwConfirmError.classList.remove("hidden");
+    isValid = false;
+  } else if (password && password !== passwordConfirm) {
+    pwConfirmError.textContent = "비밀번호가 일치하지 않습니다.";
+    pwConfirmError.classList.remove("hidden");
+    isValid = false;
+  } else {
+    pwConfirmError.classList.add("hidden");
+  }
+
+  // --- 닉네임 ---
+  if (!nickname) {
+    nicknameError.textContent = "닉네임을 입력해주세요.";
+    nicknameError.classList.remove("hidden");
+    isValid = false;
+  } else if (nickname.length > 20) {
+    nicknameError.textContent = "닉네임은 최대 20자까지 가능합니다.";
+    nicknameError.classList.remove("hidden");
+    isValid = false;
+  } else {
+    nicknameError.classList.add("hidden");
+  }
+
+  // 버튼 상태 업데이트
+  signupBtn.disabled = !isValid;
+  if (isValid) {
     signupBtn.classList.remove("disabled");
     signupBtn.classList.add("active");
   } else {
-    signupBtn.disabled = true;
     signupBtn.classList.add("disabled");
     signupBtn.classList.remove("active");
   }
+
+  return isValid;
 }
 
-// 프로필 이미지 업로드
+// ===== 프로필 이미지 선택/미리보기 =====
 profilePlaceholder.addEventListener("click", () => {
   profileInput.click();
 });
 
-profileInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+profileInput.addEventListener("change", () => {
+  const file = profileInput.files[0];
 
-  profileFile = file;
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    profilePreview.src = event.target.result;
-    profilePreview.classList.remove("hidden");
-  };
-  reader.readAsDataURL(file);
-
-  isProfileValid = true;
-  profileHelper.classList.add("hidden");
-  updateSignupButton();
-});
-
-// 이메일 검증
-function validateEmail(showMessage = true) {
-  const value = emailInput.value.trim();
-
-  if (value === "") {
-    isEmailValid = false;
-    if (showMessage) {
-      emailError.textContent = "이메일을 입력해주세요.";
-      emailError.classList.remove("hidden");
-    }
-  } else if (!emailRegex.test(value)) {
-    isEmailValid = false;
-    if (showMessage) {
-      emailError.textContent =
-        "올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)";
-      emailError.classList.remove("hidden");
-    }
-  } else {
-    isEmailValid = true;
-    emailError.classList.add("hidden");
-  }
-  updateSignupButton();
-}
-
-emailInput.addEventListener("input", () => validateEmail(false));
-emailInput.addEventListener("blur", () => validateEmail(true));
-
-// 비밀번호 검증
-function validatePassword(showMessage = true) {
-  const value = pwInput.value;
-
-  if (value === "") {
-    isPwValid = false;
-    if (showMessage) {
-      pwError.textContent = "비밀번호를 입력해주세요.";
-      pwError.classList.remove("hidden");
-    }
-  } else if (!passwordRegex.test(value)) {
-    isPwValid = false;
-    if (showMessage) {
-      pwError.textContent =
-        "비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.";
-      pwError.classList.remove("hidden");
-    }
-  } else {
-    isPwValid = true;
-    pwError.classList.add("hidden");
-  }
-  validatePasswordConfirm(false);
-  updateSignupButton();
-}
-
-pwInput.addEventListener("input", () => validatePassword(false));
-pwInput.addEventListener("blur", () => validatePassword(true));
-
-// 비밀번호 확인 검증
-function validatePasswordConfirm(showMessage = true) {
-  const value = pwConfirmInput.value;
-
-  if (value === "") {
-    isPwConfirmValid = false;
-    if (showMessage) {
-      pwConfirmError.textContent = "비밀번호를 한번 더 입력해주세요.";
-      pwConfirmError.classList.remove("hidden");
-    }
-  } else if (value !== pwInput.value) {
-    isPwConfirmValid = false;
-    if (showMessage) {
-      pwConfirmError.textContent = "비밀번호가 다릅니다.";
-      pwConfirmError.classList.remove("hidden");
-    }
-  } else {
-    isPwConfirmValid = true;
-    pwConfirmError.classList.add("hidden");
-  }
-  updateSignupButton();
-}
-
-pwConfirmInput.addEventListener("input", () =>
-  validatePasswordConfirm(false)
-);
-pwConfirmInput.addEventListener("blur", () =>
-  validatePasswordConfirm(true)
-);
-
-// 닉네임 검증
-function validateNickname(showMessage = true) {
-  const value = nicknameInput.value;
-
-  if (value.trim() === "") {
-    isNicknameValid = false;
-    if (showMessage) {
-      nicknameError.textContent = "닉네임을 입력해주세요.";
-      nicknameError.classList.remove("hidden");
-    }
-  } else if (/\s/.test(value)) {
-    isNicknameValid = false;
-    if (showMessage) {
-      nicknameError.textContent = "띄어쓰기를 없애주세요.";
-      nicknameError.classList.remove("hidden");
-    }
-  } else if (value.length > 10) {
-    isNicknameValid = false;
-    if (showMessage) {
-      nicknameError.textContent = "닉네임은 최대 10자까지 작성 가능합니다.";
-      nicknameError.classList.remove("hidden");
-    }
-  } else {
-    isNicknameValid = true;
-    nicknameError.classList.add("hidden");
-  }
-  updateSignupButton();
-}
-
-nicknameInput.addEventListener("input", () => validateNickname(false));
-nicknameInput.addEventListener("blur", () => validateNickname(true));
-
-// 페이지 이동 공통
-function goLoginPage() {
-  window.location.href = "./login.html";
-}
-
-backBtn.addEventListener("click", goLoginPage);
-goLoginBtn.addEventListener("click", goLoginPage);
-
-// 회원가입 API
-signupBtn.addEventListener("click", async () => {
-  if (!profileFile) {
-    isProfileValid = false;
-    profileHelper.textContent = "프로필 사진을 추가해주세요.";
+  if (!file) {
+    // 선택 취소한 경우
+    selectedProfileFile = null;
+    profilePreview.src = "";
+    profilePreview.classList.add("hidden");
     profileHelper.classList.remove("hidden");
-  }
-
-  validateEmail(true);
-  validatePassword(true);
-  validatePasswordConfirm(true);
-  validateNickname(true);
-
-  if (
-    !isProfileValid ||
-    !isEmailValid ||
-    !isPwValid ||
-    !isPwConfirmValid ||
-    !isNicknameValid
-  ) {
-    updateSignupButton();
     return;
   }
 
-  const formData = new FormData();
-  formData.append("email", emailInput.value.trim());
-  formData.append("password", pwInput.value);
-  formData.append("passwordConfirm", pwConfirmInput.value);
-  formData.append("nickname", nicknameInput.value.trim());
-  formData.append("profileImage", profileFile);
+  selectedProfileFile = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    profilePreview.src = e.target.result; // data URL
+    profilePreview.classList.remove("hidden");
+    profileHelper.classList.add("hidden");
+  };
+  reader.readAsDataURL(file);
+});
+
+// ===== 회원가입 요청 =====
+async function handleSignup() {
+  const ok = validateForm();
+  if (!ok) return;
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  const nickname = nicknameInput.value.trim();
 
   try {
-    const res = await fetch("http://localhost:8080/auth/signup", {
-      method: "POST",
-      body: formData,
-    });
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("nickname", nickname);
 
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      const msg = data.message || "회원가입에 실패했습니다.";
-
-      if (msg.includes("이메일")) {
-        emailError.textContent = msg;
-        emailError.classList.remove("hidden");
-        isEmailValid = false;
-      } else if (msg.includes("닉네임")) {
-        nicknameError.textContent = msg;
-        nicknameError.classList.remove("hidden");
-        isNicknameValid = false;
-      } else {
-        alert(msg);
-      }
-
-      updateSignupButton();
-      return;
+    // 프로필 이미지는 선택했을 때만 전송 (선택 안 하면 null/기본 이미지로 처리)
+    if (selectedProfileFile) {
+      formData.append(PROFILE_IMAGE_FIELD_NAME, selectedProfileFile);
     }
 
+    const result = await apiFetch("/auth/signup", {
+      method: "POST",
+      body: formData,
+      includeAuth: false, // 비로그인 상태
+    });
+
+    // result 예시:
+    // { id, nickname, email, profileImageUrl ... }
+
     alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
-    goLoginPage();
-  } catch (e) {
-    console.error(e);
-    alert("서버 오류가 발생했습니다.");
+    window.location.href = "./login.html";
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "회원가입에 실패했습니다. 입력 값을 다시 확인해주세요.");
   }
+}
+
+// ===== 이벤트 바인딩 =====
+emailInput.addEventListener("input", validateForm);
+passwordInput.addEventListener("input", validateForm);
+passwordConfirmInput.addEventListener("input", validateForm);
+nicknameInput.addEventListener("input", validateForm);
+
+signupBtn.addEventListener("click", handleSignup);
+
+goLoginBtn.addEventListener("click", () => {
+  window.location.href = "./login.html";
 });
+
+// 초기 진입 시 버튼 상태 세팅
+validateForm();

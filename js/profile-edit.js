@@ -1,9 +1,13 @@
 // js/profile-edit.js
 import { initHeader } from "./header.js";
+import { apiFetch } from "./api-fetch.js";
 
 initHeader();
 
-const USE_MOCK_PROFILE = true; // 나중에 실제 API 붙일 땐 false
+// 백엔드 실제 경로에 맞춰서 수정하면 됨
+const PROFILE_ME_PATH = "/users/me";
+// 백엔드에서 프로필 이미지 필드명
+const PROFILE_IMAGE_FIELD_NAME = "profileImage";
 
 // DOM 요소
 const emailInput = document.getElementById("email-input");
@@ -27,43 +31,44 @@ let toastTimer = null;
 let uploadedImageFile = null;
 
 // ------------------------
+// 로그인 체크
+// ------------------------
+function ensureLoggedIn() {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    window.location.href = "./login.html";
+    return false;
+  }
+  return true;
+}
+
+// ------------------------
 // 초기 유저 정보 로딩
 // ------------------------
 async function loadProfile() {
-  if (USE_MOCK_PROFILE) {
-    const mockUser = {
-      email: "startupcode@gmail.com",
-      nickname: "스타트업코드",
-      profileImageUrl: "../assets/profile-sample.png",
-    };
-    renderProfile(mockUser);
-    return;
-  }
+  if (!ensureLoggedIn()) return;
 
   try {
-    const res = await fetch("http://localhost:8080/api/users/me", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-      },
+    // GET /users/me (ApiResponse<UserResponse> → apiFetch가 result만 돌려줌)
+    const user = await apiFetch(PROFILE_ME_PATH, {
+      method: "GET",
     });
 
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.message || "회원 정보를 불러오지 못했습니다.");
-      return;
-    }
-    renderProfile(data);
+    // user: { email, nickname, profileImageUrl(or image), ... }
+    renderProfile(user);
   } catch (err) {
     console.error(err);
-    alert("회원 정보를 불러오는 중 오류가 발생했습니다.");
+    alert(err.message || "회원 정보를 불러오지 못했습니다.");
   }
 }
 
 function renderProfile(user) {
   emailInput.value = user.email || "";
   nicknameInput.value = user.nickname || "";
-  if (user.profileImageUrl) {
-    profileImg.src = user.profileImageUrl;
+  const imageUrl = user.profileImageUrl || user.profileImage || user.image;
+  if (imageUrl) {
+    profileImg.src = imageUrl;
   }
   updateSaveButtonStyle();
 }
@@ -125,63 +130,32 @@ saveBtn.addEventListener("click", async () => {
   if (!validateNickname(nickname)) {
     return;
   }
-
-  if (USE_MOCK_PROFILE) {
-    // 닉네임 중복 더미 체크: "중복" 이라는 텍스트가 포함되면 중복으로 가정
-    if (nickname.includes("중복")) {
-      nicknameHelper.textContent = "*중복된 닉네임 입니다.";
-      return;
-    }
-
-    console.log("개발용: 프로필 수정 요청", {
-      nickname,
-      image: uploadedImageFile,
-    });
-
-    showToast("수정 완료");
-    return;
-  }
+  if (!ensureLoggedIn()) return;
 
   try {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      alert("로그인이 필요합니다.");
-      window.location.href = "./login.html";
-      return;
-    }
-
-    // 이미지가 포함되므로 FormData 사용
     const formData = new FormData();
     formData.append("nickname", nickname.trim());
     if (uploadedImageFile) {
-      formData.append("profileImage", uploadedImageFile);
+      formData.append(PROFILE_IMAGE_FIELD_NAME, uploadedImageFile);
     }
 
-    const res = await fetch("http://localhost:8080/api/users/me", {
+    // PATCH /users/me
+    await apiFetch(PROFILE_ME_PATH, {
       method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: formData,
     });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (res.status === 409) {
-      // 닉네임 중복 가정
-      nicknameHelper.textContent = "*중복된 닉네임 입니다.";
-      return;
-    }
-
-    if (!res.ok) {
-      alert(data.message || "회원 정보 수정에 실패했습니다.");
-      return;
-    }
 
     showToast("수정 완료");
   } catch (err) {
     console.error(err);
-    alert("회원 정보 수정 중 오류가 발생했습니다.");
+
+    // 닉네임 중복 가정: 409 에러
+    if (err.code === 409) {
+      nicknameHelper.textContent = "*중복된 닉네임 입니다.";
+      return;
+    }
+
+    alert(err.message || "회원 정보 수정에 실패했습니다.");
   }
 });
 
@@ -222,38 +196,19 @@ withdrawCancelBtn.addEventListener("click", () => {
 
 // 확인
 withdrawConfirmBtn.addEventListener("click", async () => {
-  if (USE_MOCK_PROFILE) {
-    alert("개발용: 회원 탈퇴가 완료되었다고 가정하고 로그인 페이지로 이동합니다.");
-    localStorage.removeItem("accessToken");
-    window.location.href = "./login.html";
-    return;
-  }
+  if (!ensureLoggedIn()) return;
 
   try {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      window.location.href = "./login.html";
-      return;
-    }
-
-    const res = await fetch("http://localhost:8080/api/users/me", {
+    await apiFetch(PROFILE_ME_PATH, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      alert(data.message || "회원 탈퇴에 실패했습니다.");
-      return;
-    }
-
+    alert("회원 탈퇴가 완료되었습니다.");
     localStorage.removeItem("accessToken");
     window.location.href = "./login.html";
   } catch (err) {
     console.error(err);
-    alert("회원 탈퇴 중 오류가 발생했습니다.");
+    alert(err.message || "회원 탈퇴에 실패했습니다.");
   }
 });
 

@@ -1,10 +1,12 @@
 // js/password-edit.js
 // 비밀번호 수정 페이지 전용 스크립트
 import { initHeader } from "./header.js";
+import { apiFetch } from "./api-fetch.js";
 
 initHeader();
-// (선택) 실제 연동 시 사용할 토큰 유틸 – 존재한다고 가정
-// import { getAuthToken, requireAuth } from "./common/auth.js";
+
+// ---- 상수 ----
+const PASSWORD_CHANGE_PATH = "/users/me/password";
 
 // ---- DOM 참조 ----
 const passwordInput = document.getElementById("password");
@@ -90,28 +92,19 @@ function showToast(message) {
   }, 2000);
 }
 
-// ---- 더미 API 호출 (나중에 실제 API로 교체) ----
-async function updatePasswordApi(newPassword) {
-  // 실제 구현 예시 (백엔드 연결 시 교체)
-  /*
-  const token = getAuthToken();
-  const res = await fetch("/api/users/me/password", {
+// ---- 실제 비밀번호 변경 API 호출 ----
+async function updatePasswordApi(newPassword, confirmPassword) {
+  // apiFetch가 알아서:
+  // - Content-Type: application/json
+  // - Authorization: Bearer <token> (localStorage.accessToken)
+  // 붙여서 호출함
+  await apiFetch(PASSWORD_CHANGE_PATH, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+    body: {
+      newPassword,      // ✅ 백엔드 DTO 필드명과 일치
+      confirmPassword,  // ✅ 백엔드 DTO 필드명과 일치
     },
-    body: JSON.stringify({ password: newPassword }),
   });
-
-  if (!res.ok) {
-    throw new Error("비밀번호 수정 실패");
-  }
-  */
-
-  // 지금은 개발 편의를 위한 더미 구현
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return { success: true };
 }
 
 // ---- 이벤트 바인딩 ----
@@ -138,11 +131,13 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  const newPassword = passwordInput.value.trim();
+  const confirmPassword = passwordConfirmInput.value.trim();
+
   try {
     submitBtn.disabled = true;
 
-    const newPassword = passwordInput.value.trim();
-    await updatePasswordApi(newPassword);
+    await updatePasswordApi(newPassword, confirmPassword);
 
     // 성공 토스트
     showToast("수정 완료");
@@ -155,10 +150,7 @@ form.addEventListener("submit", async (event) => {
     updateSubmitButtonState();
   } catch (error) {
     console.error(error);
-    alert("비밀번호 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
+    alert(error.message || "비밀번호 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
     updateSubmitButtonState();
   }
 });
-
-// ---- 페이지 진입 시 인증 체크 (선택) ----
-// requireAuth && requireAuth();

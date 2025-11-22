@@ -1,130 +1,119 @@
 // js/login.js
+import { apiFetch } from "./api-fetch.js";
 
-// ------------------------------
-// 개발용 로그인 플래그
-// 나중에 실제 백엔드 붙일 때 false로 변경하면 됨
-// ------------------------------
-const USE_MOCK_LOGIN = true;
-
-// 개발용 계정
-const DEV_EMAIL = "dev@example.com";
-const DEV_PASSWORD = "Dev1234!";
-
+// HTML 요소 가져오기 (login.html 구조와 정확히 맞춤)
 const emailInput = document.getElementById("login-email");
-const pwInput = document.getElementById("login-password");
+const passwordInput = document.getElementById("login-password");
 const loginBtn = document.getElementById("login-btn");
 const goSignupBtn = document.getElementById("go-signup-btn");
 
 const emailError = document.getElementById("login-email-error");
 const pwError = document.getElementById("login-pw-error");
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|;:'",.<>/?]).{8,20}$/;
+// ---------- 검증 함수 ----------
+function isValidEmail(value) {
+  if (!value) return false;
+  // 아주 기본적인 이메일 형식 체크
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+}
 
-// 버튼 활성/비활성
-function updateLoginButton() {
-  const emailValid = emailRegex.test(emailInput.value.trim());
-  const pwValid = passwordRegex.test(pwInput.value);
+function isValidPassword(value) {
+  if (!value) return false;
+  // 8~20자, 대/소문자, 숫자, 특수문자 각각 1개 이상
+  const pwRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|;:'",.<>/?`~]).{8,20}$/;
+  return pwRegex.test(value);
+}
 
-  if (emailValid && pwValid) {
-    loginBtn.disabled = false;
+// ---------- 버튼 활성/비활성 업데이트 ----------
+function updateButtonState() {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+
+  const emailOk = isValidEmail(email);
+  const pwOk = isValidPassword(password);
+
+  // 에러 메시지 표시/숨김
+  if (!emailOk && email.length > 0) {
+    emailError.classList.remove("hidden");
+  } else {
+    emailError.classList.add("hidden");
+  }
+
+  if (!pwOk && password.length > 0) {
+    pwError.classList.remove("hidden");
+  } else {
+    pwError.classList.add("hidden");
+  }
+
+  const canSubmit = emailOk && pwOk;
+
+  loginBtn.disabled = !canSubmit;
+  if (canSubmit) {
     loginBtn.classList.remove("disabled");
     loginBtn.classList.add("active");
   } else {
-    loginBtn.disabled = true;
     loginBtn.classList.add("disabled");
     loginBtn.classList.remove("active");
   }
 }
 
-emailInput.addEventListener("input", updateLoginButton);
-pwInput.addEventListener("input", updateLoginButton);
+// ---------- 로그인 요청 ----------
+async function handleLogin() {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
 
-// blur 시 helper text
-emailInput.addEventListener("blur", () => {
-  const value = emailInput.value.trim();
-  if (value === "" || !emailRegex.test(value)) {
-    emailError.classList.remove("hidden");
-  } else {
-    emailError.classList.add("hidden");
+  // 최종 방어 (버튼이 활성인데도 혹시 모를 상황 대비)
+  if (!isValidEmail(email) || !isValidPassword(password)) {
+    alert("이메일/비밀번호 형식을 다시 확인해주세요.");
+    return;
   }
-});
 
-pwInput.addEventListener("blur", () => {
-  const value = pwInput.value;
-  if (value === "" || !passwordRegex.test(value)) {
-    pwError.classList.remove("hidden");
-  } else {
-    pwError.classList.add("hidden");
-  }
-});
-
-// ------------------------------
-// 개발용 로그인 함수
-// ------------------------------
-function mockLogin(email, password) {
-  if (email === DEV_EMAIL && password === DEV_PASSWORD) {
-    // 개발용 더미 토큰 저장
-    localStorage.setItem("accessToken", "DEV-TOKEN");
-    alert("개발용 계정으로 로그인되었습니다.");
-    window.location.href = "./posts.html"; // 게시글 목록 페이지
-  } else {
-    alert(
-      "개발용 계정이 아닙니다.\n\n테스트용 계정\n이메일: " +
-        DEV_EMAIL +
-        "\n비밀번호: " +
-        DEV_PASSWORD
-    );
-  }
-}
-
-// ------------------------------
-// 실제 로그인(백엔드 연동용) – 나중에 USE_MOCK_LOGIN=false로 바꾸고 사용
-// ------------------------------
-async function realLogin(email, password) {
   try {
-    const res = await fetch("http://localhost:8080/auth/login", {
+    // /auth/login 호출 (공통 apiFetch 사용)
+    const result = await apiFetch("/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: {
+        email,
+        password,
+      },
     });
 
-    const data = await res.json();
+    // 응답 형태:
+    // {
+    //   token: "dummy-4",
+    //   user: { id: "4", email: "test@example.com" }
+    // }
+    const { token, user } = result;
 
-    if (!res.ok) {
-      alert(data.message || "로그인 실패");
-      return;
+    // 토큰 저장 (이름은 백엔드와 합의한 키 사용)
+    localStorage.setItem("accessToken", token);
+    if (user?.id) {
+      localStorage.setItem("userId", String(user.id));
+    }
+    if (user?.email) {
+      localStorage.setItem("userEmail", user.email);
     }
 
-    // 실제 토큰 이름에 맞춰 변경
-    if (data.accessToken) {
-      localStorage.setItem("accessToken", data.accessToken);
-    }
-
-    alert("로그인 성공!");
+    alert("로그인 성공! 게시판으로 이동합니다.");
     window.location.href = "./posts.html";
   } catch (err) {
     console.error(err);
-    alert("서버 오류가 발생했습니다.");
+    // apiFetch 안에서 message를 throw 했다면 그 메시지 사용
+    alert(err.message || "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.");
   }
 }
 
-// ------------------------------
-// 로그인 버튼 클릭
-// ------------------------------
-loginBtn.addEventListener("click", () => {
-  const email = emailInput.value.trim();
-  const password = pwInput.value;
+// ---------- 이벤트 바인딩 ----------
+emailInput.addEventListener("input", updateButtonState);
+passwordInput.addEventListener("input", updateButtonState);
 
-  if (USE_MOCK_LOGIN) {
-    mockLogin(email, password);
-  } else {
-    realLogin(email, password);
-  }
-});
+loginBtn.addEventListener("click", handleLogin);
 
-// 회원가입으로 이동
 goSignupBtn.addEventListener("click", () => {
   window.location.href = "./signup.html";
 });
+
+// 처음 진입 시 버튼 상태 초기화
+updateButtonState();

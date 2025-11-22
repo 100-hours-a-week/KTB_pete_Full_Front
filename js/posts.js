@@ -1,37 +1,23 @@
 // js/posts.js
 import { initHeader } from "./header.js";
+import { apiFetch } from "./api-fetch.js";
 
 initHeader();
-// ------------------------------
-// 개발 플래그
-// ------------------------------
-
-// 게시글 더미 데이터 사용할지 여부
-const USE_MOCK_POSTS = true;
-
-// 로그인 안 한 사용자는 posts 페이지 접근 못하게 막을지 여부
-const USE_LOGIN_GUARD = false; // true 로 바꾸면 토큰 없을 때 login.html로 튕김
 
 // ------------------------------
-// 로그인 가드 (선택사항)
+// 플래그
 // ------------------------------
-if (USE_LOGIN_GUARD) {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    alert("로그인 후 이용해주세요.");
-    window.location.href = "./login.html";
-  }
-}
+const USE_MOCK_POSTS = false;
 
 // ------------------------------
-// DOM 요소
+// DOM
 // ------------------------------
 const postListEl = document.getElementById("post-list");
 const emptyTextEl = document.getElementById("empty-text");
 const goWriteBtn = document.getElementById("go-write-btn");
 
 // ------------------------------
-// 인피니트 스크롤용 상태
+// 상태
 // ------------------------------
 let currentPage = 0;
 let pageSize = 10;
@@ -39,7 +25,7 @@ let isLastPage = false;
 let isLoading = false;
 
 // ------------------------------
-// 개발용 더미 게시글 데이터
+// 더미 (원할 때만 사용)
 // ------------------------------
 const mockPosts = [
   {
@@ -53,53 +39,17 @@ const mockPosts = [
   },
   {
     id: 2,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
-  },
-  {
-    id: 3,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
-  },
-  {
-    id: 4,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
-  },
-  {
-    id: 5,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
-  },
-  {
-    id: 6,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
+    title: "제목 2",
+    likeCount: 3,
+    commentCount: 1,
+    viewCount: 10,
+    createdAt: "2021-01-02T00:00:00",
+    writerNickname: "더미 작성자 2",
   },
 ];
 
 // ------------------------------
-// 날짜 포맷팅
+// 유틸
 // ------------------------------
 function formatDateTime(isoString) {
   if (!isoString) return "";
@@ -116,57 +66,24 @@ function formatDateTime(isoString) {
   return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
 }
 
-// ------------------------------
-// 응답에서 게시글 배열 뽑기
-// (나중에 실제 API 구조에 맞춰서 여기만 손보면 됨)
-// ------------------------------
-function extractPostsFromResponse(data) {
-  if (Array.isArray(data.posts)) return data.posts;
-  if (Array.isArray(data.content)) return data.content;
-  if (data.data && Array.isArray(data.data.posts)) return data.data.posts;
-  if (data.data && Array.isArray(data.data.content)) return data.data.content;
-  return [];
-}
-
-// 페이징 상태 업데이트 (Spring Page 가정)
-function updatePageStateFromResponse(data) {
-  if (typeof data.last === "boolean") {
-    isLastPage = data.last;
-  }
-  if (typeof data.number === "number") {
-    currentPage = data.number;
-  }
-  if (typeof data.size === "number") {
-    pageSize = data.size;
-  }
-}
-
-// ------------------------------
-// 게시글 카드 DOM 생성
-// ------------------------------
+// 카드 생성
 function createPostCard(post) {
   const {
     id,
-    postId,
     title,
     createdAt,
     writerNickname,
-    authorNickname,
-    nickname,
-    likeCount,
     likes,
-    commentCount,
-    commentsCount,
-    viewCount,
+    comments,
     views,
   } = post;
 
-  const actualId = id ?? postId;
+  const actualId = id;
   const postTitle = title ?? "(제목 없음)";
-  const authorName = writerNickname ?? authorNickname ?? nickname ?? "작성자";
-  const like = likeCount ?? likes ?? 0;
-  const comment = commentCount ?? commentsCount ?? 0;
-  const view = viewCount ?? views ?? 0;
+  const authorName = writerNickname ?? "작성자";
+  const like = Number(likes ?? 0);
+  const comment = Number(comments ?? 0);
+  const view = Number(views ?? 0);
 
   const card = document.createElement("article");
   card.className = "post-card";
@@ -192,16 +109,12 @@ function createPostCard(post) {
 
   card.addEventListener("click", () => {
     if (!actualId) return;
-    // TODO: 실제 상세 페이지 파일명에 맞게 수정
     window.location.href = `./post-detail.html?postId=${actualId}`;
   });
 
   return card;
 }
 
-// ------------------------------
-// 게시글 렌더링 (append 방식)
-// ------------------------------
 function appendPosts(posts) {
   if (!posts.length && currentPage === 0) {
     emptyTextEl.classList.remove("hidden");
@@ -217,55 +130,54 @@ function appendPosts(posts) {
 }
 
 // ------------------------------
-// 게시글 조회 (page 단위)
+// 게시글 조회
 // ------------------------------
 async function fetchPosts(page) {
-  // --- 개발용 더미 데이터 모드 ---
   if (USE_MOCK_POSTS) {
-    // mockPosts를 한 번에 전부 붙여주고, 더 이상 로딩 안 하도록 처리
     appendPosts(mockPosts);
     isLastPage = true;
     return;
   }
 
-  // --- 실제 API 모드 ---
   if (isLoading || isLastPage) return;
-
   isLoading = true;
 
-  const token = localStorage.getItem("accessToken");
   const params = new URLSearchParams({
     page: String(page),
     size: String(pageSize),
+    sort: "createdAt",
+    dir: "desc",
   });
 
   try {
-    const res = await fetch(
-      `http://localhost:8080/board/posts?${params.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          Accept: "application/json",
-        },
-      }
-    );
+    const result = await apiFetch(`/board/posts?${params.toString()}`, {
+      method: "GET",
+      includeAuth: false, // 비로그인도 목록 조회 가능
+    });
 
-    const data = await res.json().catch(() => ({}));
+    const items = Array.isArray(result.items) ? result.items : [];
+    const pageInfo = result.page || {};
 
-    if (!res.ok) {
-      console.error("게시글 조회 실패:", data);
-      alert(data.message || "게시글을 불러오지 못했습니다.");
-      isLoading = false;
-      return;
+    appendPosts(items);
+
+    currentPage =
+      typeof pageInfo.page === "number" ? pageInfo.page : page;
+    pageSize =
+      typeof pageInfo.size === "number" ? pageInfo.size : pageSize;
+
+    const totalPages =
+      typeof pageInfo.totalPages === "number" ? pageInfo.totalPages : null;
+
+    if (totalPages !== null && currentPage >= totalPages - 1) {
+      isLastPage = true;
     }
 
-    updatePageStateFromResponse(data);
-    const posts = extractPostsFromResponse(data);
-    appendPosts(posts);
+    if (currentPage === 0 && items.length === 0) {
+      emptyTextEl.classList.remove("hidden");
+    }
   } catch (err) {
-    console.error(err);
-    alert("서버 통신 중 오류가 발생했습니다.");
+    console.error("게시글 조회 실패:", err);
+    alert(err.message || "게시글을 불러오지 못했습니다.");
   } finally {
     isLoading = false;
   }
@@ -275,7 +187,7 @@ async function fetchPosts(page) {
 // 인피니트 스크롤
 // ------------------------------
 function handleScroll() {
-  if (USE_MOCK_POSTS) return; // 더미 모드에선 추가 로딩 안 함
+  if (USE_MOCK_POSTS) return;
   if (isLoading || isLastPage) return;
 
   const { scrollTop, scrollHeight, clientHeight } = postListEl;
@@ -289,14 +201,14 @@ function handleScroll() {
 postListEl.addEventListener("scroll", handleScroll);
 
 // ------------------------------
-// 게시글 작성 버튼 클릭
+// 글쓰기 버튼
 // ------------------------------
 if (goWriteBtn) {
   goWriteBtn.addEventListener("click", () => {
-    // posts.html과 post-create.html 둘 다 html 폴더 안에 있으니까 ./ 상대 경로
     window.location.href = "./post-create.html";
   });
 }
+
 // ------------------------------
 // 초기 로딩
 // ------------------------------
