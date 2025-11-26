@@ -1,6 +1,8 @@
-// js/posts.js
 import { initHeader } from "./header.js";
 import { apiFetch } from "./api-fetch.js";
+import { throttle } from "./utils.js";
+import { formatDateTime } from "./date-utils.js";
+import { showToast } from "./utils.js";
 
 initHeader();
 
@@ -17,54 +19,17 @@ const emptyTextEl = document.getElementById("empty-text");
 const goWriteBtn = document.getElementById("go-write-btn");
 
 // ------------------------------
+// 상수
+// ------------------------------
+const PAGE_SIZE = 10;
+
+// ------------------------------
 // 상태
 // ------------------------------
 let currentPage = 0;
-let pageSize = 10;
+let pageSize = PAGE_SIZE;
 let isLastPage = false;
 let isLoading = false;
-
-// ------------------------------
-// 더미 (원할 때만 사용)
-// ------------------------------
-const mockPosts = [
-  {
-    id: 1,
-    title: "제목 1",
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    createdAt: "2021-01-01T00:00:00",
-    writerNickname: "더미 작성자 1",
-  },
-  {
-    id: 2,
-    title: "제목 2",
-    likeCount: 3,
-    commentCount: 1,
-    viewCount: 10,
-    createdAt: "2021-01-02T00:00:00",
-    writerNickname: "더미 작성자 2",
-  },
-];
-
-// ------------------------------
-// 유틸
-// ------------------------------
-function formatDateTime(isoString) {
-  if (!isoString) return "";
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return isoString;
-
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mi = String(date.getMinutes()).padStart(2, "0");
-  const ss = String(date.getSeconds()).padStart(2, "0");
-
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-}
 
 // 카드 생성
 function createPostCard(post) {
@@ -85,28 +50,57 @@ function createPostCard(post) {
   const comment = Number(comments ?? 0);
   const view = Number(views ?? 0);
 
+  // <article class="post-card">
   const card = document.createElement("article");
   card.className = "post-card";
 
-  card.innerHTML = `
-    <div class="post-header">
-      <div>
-        <p class="post-title">${postTitle}</p>
-        <p class="post-meta-top">
-          <span class="post-stats">
-            좋아요 ${like} ㆍ 댓글 ${comment} ㆍ 조회수 ${view}
-          </span>
-        </p>
-      </div>
-      <p class="post-date">${formatDateTime(createdAt)}</p>
-    </div>
+  // ----- 상단 헤더 -----
+  const header = document.createElement("div");
+  header.className = "post-header";
 
-    <div class="post-footer">
-      <div class="post-author-avatar"></div>
-      <p class="post-author-name">${authorName}</p>
-    </div>
-  `;
+  const headerLeft = document.createElement("div");
 
+  const titleEl = document.createElement("p");
+  titleEl.className = "post-title";
+  titleEl.textContent = postTitle;
+
+  const metaTop = document.createElement("p");
+  metaTop.className = "post-meta-top";
+
+  const statsSpan = document.createElement("span");
+  statsSpan.className = "post-stats";
+  statsSpan.textContent = `좋아요 ${like} ㆍ 댓글 ${comment} ㆍ 조회수 ${view}`;
+
+  metaTop.appendChild(statsSpan);
+  headerLeft.appendChild(titleEl);
+  headerLeft.appendChild(metaTop);
+
+  const dateEl = document.createElement("p");
+  dateEl.className = "post-date";
+  dateEl.textContent = formatDateTime(createdAt);
+
+  header.appendChild(headerLeft);
+  header.appendChild(dateEl);
+
+  // ----- 하단 푸터 -----
+  const footer = document.createElement("div");
+  footer.className = "post-footer";
+
+  const avatar = document.createElement("div");
+  avatar.className = "post-author-avatar";
+
+  const authorEl = document.createElement("p");
+  authorEl.className = "post-author-name";
+  authorEl.textContent = authorName;
+
+  footer.appendChild(avatar);
+  footer.appendChild(authorEl);
+
+  // ----- 카드 조립 -----
+  card.appendChild(header);
+  card.appendChild(footer);
+
+  // ----- 클릭 이벤트 -----
   card.addEventListener("click", () => {
     if (!actualId) return;
     window.location.href = `./post-detail.html?postId=${actualId}`;
@@ -114,6 +108,7 @@ function createPostCard(post) {
 
   return card;
 }
+
 
 function appendPosts(posts) {
   if (!posts.length && currentPage === 0) {
@@ -177,7 +172,7 @@ async function fetchPosts(page) {
     }
   } catch (err) {
     console.error("게시글 조회 실패:", err);
-    alert(err.message || "게시글을 불러오지 못했습니다.");
+    showToast(err.message || "게시글을 불러오지 못했습니다.");
   } finally {
     isLoading = false;
   }
@@ -198,8 +193,8 @@ function handleScroll() {
   }
 }
 
-postListEl.addEventListener("scroll", handleScroll);
-
+const throttledHandleScroll = throttle(handleScroll, 200);
+postListEl.addEventListener("scroll", throttledHandleScroll);
 // ------------------------------
 // 글쓰기 버튼
 // ------------------------------

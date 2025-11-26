@@ -1,5 +1,6 @@
-// js/login.js
 import { apiFetch } from "./api-fetch.js";
+import { isValidEmail, isValidPassword } from "./validation.js";
+import { showToast } from "./utils.js";
 
 // HTML 요소 가져오기 (login.html 구조와 정확히 맞춤)
 const emailInput = document.getElementById("login-email");
@@ -9,22 +10,6 @@ const goSignupBtn = document.getElementById("go-signup-btn");
 
 const emailError = document.getElementById("login-email-error");
 const pwError = document.getElementById("login-pw-error");
-
-// ---------- 검증 함수 ----------
-function isValidEmail(value) {
-  if (!value) return false;
-  // 아주 기본적인 이메일 형식 체크
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(value);
-}
-
-function isValidPassword(value) {
-  if (!value) return false;
-  // 8~20자, 대/소문자, 숫자, 특수문자 각각 1개 이상
-  const pwRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|;:'",.<>/?`~]).{8,20}$/;
-  return pwRegex.test(value);
-}
 
 // ---------- 버튼 활성/비활성 업데이트 ----------
 function updateButtonState() {
@@ -66,7 +51,7 @@ async function handleLogin() {
 
   // 최종 방어 (버튼이 활성인데도 혹시 모를 상황 대비)
   if (!isValidEmail(email) || !isValidPassword(password)) {
-    alert("이메일/비밀번호 형식을 다시 확인해주세요.");
+    showToast("이메일/비밀번호 형식을 다시 확인해주세요.");
     return;
   }
 
@@ -96,12 +81,11 @@ async function handleLogin() {
       localStorage.setItem("userEmail", user.email);
     }
 
-    alert("로그인 성공! 게시판으로 이동합니다.");
+    showToast("로그인 성공! 게시판으로 이동합니다.");
     window.location.href = "./posts.html";
   } catch (err) {
     console.error(err);
-    // apiFetch 안에서 message를 throw 했다면 그 메시지 사용
-    alert(err.message || "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.");
+    showToast(err.message || "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.");
   }
 }
 

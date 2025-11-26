@@ -1,4 +1,3 @@
-// js/header.js
 import { apiFetch, API_BASE_URL } from "./api-fetch.js";
 
 const DEFAULT_PROFILE_IMG = "../img/dummy.png";

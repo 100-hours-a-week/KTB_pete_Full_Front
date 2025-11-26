@@ -1,10 +1,9 @@
-// js/post-edit.js
 import { initHeader } from "./header.js";
 import { apiFetch } from "./api-fetch.js";
+import { showToast } from "./utils.js"
 
 initHeader();
 
-// 🔑 create 쪽에서 FormData에 쓰고 있는 필드 이름과 꼭 맞추기!
 const IMAGE_FIELD_NAME = "imageFile"; // create에서 imageFile 쓰고 있으면 그대로 이 값 사용
 
 // ------------------------------
@@ -18,7 +17,7 @@ function getPostIdFromQuery() {
 
 const postId = getPostIdFromQuery();
 if (!postId) {
-  alert("잘못된 접근입니다. 게시글 ID가 없습니다.");
+  showToast("잘못된 접근입니다. 게시글 ID가 없습니다.");
   window.location.href = "./posts.html";
 }
 
@@ -101,7 +100,7 @@ async function loadExistingPost() {
     applyExistingPost(existing);
   } catch (err) {
     console.error(err);
-    alert(err.message || "게시글 정보를 불러오지 못했습니다.");
+    showToast(err.message || "게시글 정보를 불러오지 못했습니다.");
     window.location.href = "./posts.html";
   }
 }
@@ -136,7 +135,7 @@ async function submitEdit() {
   // 로그인 체크
   const token = localStorage.getItem("accessToken");
   if (!token) {
-    alert("로그인 후 이용해주세요.");
+    showToast("로그인 후 이용해주세요.");
     window.location.href = "./login.html";
     return;
   }
@@ -160,11 +159,11 @@ async function submitEdit() {
       // apiFetch가 FormData면 Content-Type 자동 처리, 토큰 자동 포함
     });
 
-    alert("게시글이 수정되었습니다.");
+    showToast("게시글이 수정되었습니다.");
     window.location.href = `./post-detail.html?postId=${postId}`;
   } catch (err) {
     console.error(err);
-    alert(err.message || "게시글 수정에 실패했습니다.");
+    showToast(err.message || "게시글 수정에 실패했습니다.");
   }
 }
 
