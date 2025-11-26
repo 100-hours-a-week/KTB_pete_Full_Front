@@ -1,5 +1,12 @@
-// js/post-detail-api.js
 import { apiFetch, resolveImageUrl } from "./api-fetch.js";
+
+function parseBoolean(value) {
+  if (value === true) return true;
+  if (value === false) return false;
+  if (value === "true" || value === "1") return true;
+  if (value === "false" || value === "0" || value == null) return false;
+  return Boolean(value); // 혹시 모를 나머지 값 방어
+}
 
 export async function fetchPostDetail(postId) {
   const detail = await apiFetch(`/board/posts/${encodeURIComponent(postId)}`, {
@@ -14,8 +21,9 @@ export async function fetchPostDetail(postId) {
     createdAt: detail.createdAt,
     content: detail.content,
     imageUrl: resolveImageUrl(detail.image),
+    authorProfileImageUrl: resolveImageUrl(detail.writerProfileImage),
     likeCount: Number(detail.likes ?? 0),
-    isLiked: detail.liked ?? false,
+    isLiked: parseBoolean(detail.liked),
     viewCount: Number(detail.views ?? 0),
     commentCount: Number(detail.comments ?? 0),
   };
@@ -30,7 +38,7 @@ export async function togglePostLike(postId, isCurrentlyLiked) {
   );
 
   return {
-    isLiked: result.liked,
+    isLiked: parseBoolean(result.liked),
     likeCount: Number(result.likeCount ?? 0),
   };
 }

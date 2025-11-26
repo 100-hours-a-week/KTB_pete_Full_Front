@@ -1,5 +1,5 @@
 import { initHeader } from "./header.js";
-import { apiFetch } from "./api-fetch.js";
+import { apiFetch, resolveImageUrl } from "./api-fetch.js";
 import { throttle } from "./utils.js";
 import { formatDateTime } from "./date-utils.js";
 import { showToast } from "./utils.js";
@@ -41,6 +41,7 @@ function createPostCard(post) {
     likes,
     comments,
     views,
+    writerProfileImage,
   } = post;
 
   const actualId = id;
@@ -49,6 +50,11 @@ function createPostCard(post) {
   const like = Number(likes ?? 0);
   const comment = Number(comments ?? 0);
   const view = Number(views ?? 0);
+
+  const profileImageSrc = writerProfileImage
+    ? resolveImageUrl(writerProfileImage)
+    : DEFAULT_PROFILE_IMG;
+
 
   // <article class="post-card">
   const card = document.createElement("article");
@@ -86,8 +92,10 @@ function createPostCard(post) {
   const footer = document.createElement("div");
   footer.className = "post-footer";
 
-  const avatar = document.createElement("div");
+  const avatar = document.createElement("img");
   avatar.className = "post-author-avatar";
+  avatar.alt = `${authorName} 프로필`;
+  avatar.src = profileImageSrc;
 
   const authorEl = document.createElement("p");
   authorEl.className = "post-author-name";

@@ -1,5 +1,6 @@
+// js/profile-edit.js
 import { initHeader } from "./header.js";
-import { apiFetch } from "./api-fetch.js";
+import { apiFetch, resolveImageUrl } from "./api-fetch.js";
 import { requirePageAuth, handleAuthError } from "./auth.js";
 import { showToast } from "./utils.js";
 
@@ -12,6 +13,8 @@ requirePageAuth();
 const PROFILE_ME_PATH = "/users/me";
 // 백엔드에서 프로필 이미지 필드명
 const PROFILE_IMAGE_FIELD_NAME = "profileImage";
+// 기본 프로필 이미지
+const DEFAULT_PROFILE_IMG = "../img/dummy.png";
 
 // DOM 요소
 const emailInput = document.getElementById("email-input");
@@ -34,7 +37,6 @@ const withdrawConfirmBtn = document.getElementById("withdraw-confirm-btn");
 let toastTimer = null;
 let uploadedImageFile = null;
 
-
 // ------------------------
 // 초기 유저 정보 로딩
 // ------------------------
@@ -54,10 +56,20 @@ async function loadProfile() {
 function renderProfile(user) {
   emailInput.value = user.email || "";
   nicknameInput.value = user.nickname || "";
-  const imageUrl = user.profileImageUrl || user.profileImage || user.image;
-  if (imageUrl) {
-    profileImg.src = imageUrl;
+
+  // 백엔드에서 내려줄 수 있는 여러 이름 대응
+  const rawImageUrl =
+    user.profileImageUrl || user.profileImage || user.image || null;
+
+  // 서버 기준 절대 URL로 보정 + 기본 이미지 처리
+  const finalImageUrl = rawImageUrl
+    ? resolveImageUrl(rawImageUrl)
+    : DEFAULT_PROFILE_IMG;
+
+  if (profileImg) {
+    profileImg.src = finalImageUrl;
   }
+
   updateSaveButtonStyle();
 }
 
@@ -132,6 +144,8 @@ saveBtn.addEventListener("click", async () => {
     });
 
     showToast("수정 완료");
+    // 성공 후에는 다시 조회해서 서버 기준 이미지/닉네임 싱크 맞춰도 좋음
+    // await loadProfile();
   } catch (err) {
     console.error(err);
 

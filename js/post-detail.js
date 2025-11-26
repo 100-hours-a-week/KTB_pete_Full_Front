@@ -30,6 +30,7 @@ const postAuthorNameEl = document.getElementById("post-author-name");
 const postCreatedAtEl = document.getElementById("post-created-at");
 const postContentEl = document.getElementById("post-content");
 const postImageTag = document.getElementById("post-image-tag");
+const postAuthorAvatarEl = document.getElementById("post-author-avatar");
 
 const likeBtn = document.getElementById("like-btn");
 const likeCountEl = document.getElementById("like-count");
@@ -88,6 +89,11 @@ async function initPage() {
     postAuthorNameEl.textContent = detail.author;
     postCreatedAtEl.textContent = formatDateTime(detail.createdAt);
     postContentEl.textContent = detail.content;
+
+    if (postAuthorAvatarEl) {
+      postAuthorAvatarEl.src =
+        detail.authorProfileImageUrl || DEFAULT_PROFILE_IMG;
+    }    
 
     isLiked = detail.isLiked;
     likeCountEl.textContent = formatCount(detail.likeCount);
