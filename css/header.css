@@ -8,13 +8,15 @@
   position: relative;
   background-color: #ffffff;
   box-sizing: border-box;
-  padding: 0 16px; /* 좌우 여백 추가로 모바일에서도 여유 공간 */
+  padding: 0 16px;
 }
 
 .global-header-title {
   font-size: 28px;
   font-weight: 700;
   margin: 0;
+  letter-spacing: 0.08em;
+  color: #7c83fd; /* Breathe 보라 컬러 */
 }
 
 /* 우측 프로필 버튼 */

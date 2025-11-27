@@ -2,58 +2,32 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>게시글 작성 | 아무 말 대잔치</title>
+    <title>마음 남기기 | Breathe</title>
     <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/post-create.css" />
   </head>
   <body>
     <header class="global-header">
-      <button
-        id="back-btn"
-        class="back-btn"
-        type="button"
-        aria-label="게시판으로 돌아가기"
-      >
-        &lt;
-      </button>
-      <h1 class="global-header-title">아무 말 대잔치</h1>
-
+      <div class="header-back-area">
+        <button id="back-btn" class="back-btn" type="button">←</button>
+      </div>
+      <h1 class="brand-title">Breathe</h1>
       <div class="header-profile-wrapper">
-        <button
-          id="header-profile-btn"
-          class="header-profile-btn"
-          type="button"
-        >
-          <img
-            src="../img/dummy.png"
-            alt="프로필"
-            class="header-profile-img"
-          />
+        <button id="header-profile-btn" class="header-profile-btn" type="button">
+          <img src="../img/dummy.png" class="header-profile-img" />
         </button>
         <div id="profile-dropdown" class="profile-dropdown hidden">
-          <button
-            type="button"
-            class="dropdown-item"
-            data-action="edit-profile"
-          >
-            회원정보수정
-          </button>
-          <button
-            type="button"
-            class="dropdown-item"
-            data-action="change-password"
-          >
-            비밀번호수정
-          </button>
-          <button type="button" class="dropdown-item" data-action="logout">
-            로그아웃
-          </button>
+          <button class="dropdown-item" data-action="edit-profile">회원정보수정</button>
+          <button class="dropdown-item" data-action="change-password">비밀번호수정</button>
+          <button class="dropdown-item" data-action="logout">로그아웃</button>
         </div>
       </div>
     </header>
-    <div id="global-toast" class="toast hidden"></div>
+
     <main class="create-container">
-      <h2 class="page-title">게시글 작성</h2>
+      <!-- 새 안내 제목 -->
+      <h2 class="page-title">오늘 어떤 마음이 오셨나요?</h2>
+      <p class="page-sub">가볍게 남겨두고 가도 괜찮아요. 당신의 이야기를 들을게요.</p>
 
       <form id="post-create-form" class="create-form">
         <!-- 제목 -->
@@ -65,7 +39,7 @@
             id="title-input"
             class="text-input"
             type="text"
-            placeholder="제목을 입력해주세요. (최대 26글자)"
+            placeholder="짧게 한 줄 제목을 남겨주세요. (최대 26자)"
             maxlength="26"
           />
           <div class="helper-row">
@@ -82,7 +56,7 @@
             id="content-input"
             class="textarea-input"
             rows="10"
-            placeholder="내용을 입력해주세요."
+            placeholder="지금 마음 상태나 하고 싶은 말을 적어주세요."
           ></textarea>
         </section>
 
@@ -92,28 +66,21 @@
             이미지<span class="required">*</span>
           </label>
           <div class="file-row">
-            <label for="image-input" class="file-label">파일 선택</label>
+            <label for="image-input" class="file-label">이미지 선택</label>
             <input
               id="image-input"
               class="file-input"
               type="file"
               accept="image/*"
             />
-            <span id="file-name" class="file-name">파일을 선택해주세요.</span>
+            <span id="file-name" class="file-name">아직 선택된 파일이 없어요.</span>
           </div>
-          <p class="helper-text">
-            이미지는 1개만 업로드 할 수 있습니다.
-          </p>
         </section>
 
-        <!-- 완료 버튼 -->
+        <!-- 제출 -->
         <section class="form-section button-section">
-          <button
-            id="submit-create-btn"
-            class="primary-btn"
-            type="button"
-          >
-            완료
+          <button id="submit-create-btn" class="primary-btn" type="button">
+            마음 전하기
           </button>
         </section>
       </form>

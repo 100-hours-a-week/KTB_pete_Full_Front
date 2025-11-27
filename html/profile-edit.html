@@ -2,15 +2,18 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>회원정보 수정 | 아무 말 대잔치</title>
+    <title>회원정보 수정 | Breathe</title>
     <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/profile-edit.css" />
   </head>
   <body>
     <!-- 공통 헤더 -->
     <header class="global-header">
-      <h1 class="global-header-title">아무 말 대잔치</h1>
-
+      <h1 class="global-header-title">Breathe</h1>
+        <button id="back-btn" class="back-btn" type="button" aria-label="이전 페이지로">
+          ←
+        </button>
       <div class="header-profile-wrapper">
         <button
           id="header-profile-btn"
@@ -46,99 +49,113 @@
       </div>
     </header>
 
-    <main class="profile-edit-container">
-      <h2 class="page-title">회원정보수정</h2>
+    <main class="profile-edit-page">
+      <!-- 상단 카피 영역 -->
+      <section class="profile-header">
+        <span class="badge-tag">나의 프로필</span>
+        <h2 class="page-title">어떤 모습으로 기억되고 싶으신가요?</h2>
+        <p class="page-subtitle">
+          닉네임과 프로필 사진은, 이곳에서 당신을 대신해 인사하는 얼굴이에요.
+          편안하게 느껴지는 모습으로 천천히 바꿔보세요.
+        </p>
+      </section>
 
-      <!-- 프로필 이미지 -->
-      <section class="profile-image-section">
-        <p class="profile-image-label">프로필 사진*</p>
+      <!-- 프로필 카드 -->
+      <section class="profile-card">
+        <!-- 프로필 이미지 -->
+        <section class="profile-image-section">
+          <p class="profile-image-label">프로필 사진*</p>
 
-        <div class="profile-image-wrapper">
-          <img
-            id="profile-image"
-            class="profile-image"
-            src="../assets/profile-sample.png"
-            alt="프로필 이미지"
+          <div class="profile-image-wrapper">
+            <img
+              id="profile-image"
+              class="profile-image"
+              src="../img/dummy.png"
+              alt="프로필 이미지"
+            />
+            <button
+              id="profile-image-change-btn"
+              class="profile-image-change-btn"
+              type="button"
+            >
+              이미지 변경
+            </button>
+            <input
+              id="profile-image-input"
+              class="hidden"
+              type="file"
+              accept="image/*"
+            />
+          </div>
+        </section>
+
+        <!-- 이메일 + 닉네임 -->
+        <section class="profile-form-section">
+          <label for="email-input" class="form-label">이메일</label>
+          <input
+            id="email-input"
+            class="text-input"
+            type="email"
+            readonly
           />
+
+          <label for="nickname-input" class="form-label">닉네임</label>
+          <input
+            id="nickname-input"
+            class="text-input"
+            type="text"
+            maxlength="10"
+            placeholder="닉네임을 입력해주세요."
+          />
+          <p id="nickname-helper" class="helper-text"></p>
+        </section>
+
+        <!-- 버튼들 -->
+        <section class="profile-button-section">
           <button
-            id="profile-image-change-btn"
-            class="profile-image-change-btn"
+            id="profile-save-btn"
+            class="primary-btn"
             type="button"
           >
-            변경
+            변경사항 저장하기
           </button>
-          <input
-            id="profile-image-input"
-            class="hidden"
-            type="file"
-            accept="image/*"
-          />
-        </div>
-      </section>
 
-      <!-- 이메일 + 닉네임 -->
-      <section class="profile-form-section">
-        <label for="email-input" class="form-label">이메일</label>
-        <input
-          id="email-input"
-          class="text-input"
-          type="email"
-          readonly
-        />
-
-        <label for="nickname-input" class="form-label">닉네임</label>
-        <input
-          id="nickname-input"
-          class="text-input"
-          type="text"
-          maxlength="10"
-          placeholder="닉네임을 입력해주세요."
-        />
-        <p id="nickname-helper" class="helper-text"></p>
-      </section>
-
-      <!-- 버튼들 -->
-      <section class="profile-button-section">
-        <button
-          id="profile-save-btn"
-          class="primary-btn"
-          type="button"
-        >
-          수정하기
-        </button>
-
-        <button
-          id="withdraw-btn"
-          class="withdraw-btn"
-          type="button"
-        >
-          회원 탈퇴
-        </button>
+          <button
+            id="withdraw-btn"
+            class="withdraw-btn"
+            type="button"
+          >
+            Breathe에서 떠나고 싶어요
+          </button>
+        </section>
       </section>
 
       <!-- 수정 완료 토스트 -->
-      <div id="profile-toast" class="toast hidden">수정 완료</div>
+      <div id="profile-toast" class="toast hidden">수정이 완료되었어요.</div>
     </main>
 
-    <!-- 회원 탈퇴 모달 (오버레이) -->
+    <!-- 회원 탈퇴 모달 -->
     <div id="withdraw-modal" class="modal-overlay hidden">
       <div class="modal">
-        <h3 class="modal-title">회원탈퇴 하시겠습니까?</h3>
-        <p class="modal-message">작성된 게시글과 댓글은 삭제됩니다.</p>
+        <h3 class="modal-title">정말 떠나시겠어요?</h3>
+        <p class="modal-message">
+          작성했던 고민과 댓글은 모두 삭제되며,<br />
+          이후에는 다시 복구할 수 없어요.
+        </p>
         <div class="modal-actions">
           <button
             type="button"
             id="withdraw-cancel-btn"
             class="modal-btn modal-cancel-btn"
           >
-            취소
+            더 머물게요
           </button>
           <button
             type="button"
             id="withdraw-confirm-btn"
             class="modal-btn modal-confirm-btn"
           >
-            확인
+            떠날게요
           </button>
         </div>
       </div>
