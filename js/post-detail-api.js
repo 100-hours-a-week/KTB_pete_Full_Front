@@ -61,6 +61,9 @@ export async function fetchComments(postId, page, size) {
     author: c.writerNickname ?? "작성자",
     createdAt: c.createdAt,
     content: c.content,
+    profileImageUrl: resolveImageUrl(c.writerProfileImage),
+    likeCount: Number(c.likes ?? 0),
+    isLiked: parseBoolean(c.liked),
   }));
 
   return {
@@ -83,6 +86,7 @@ export async function createComment(postId, content) {
     author: result.writerNickname ?? "작성자",
     createdAt: result.createdAt,
     content: result.content,
+    authorProfileImageUrl: resolveImageUrl(result.writerProfileImage),
   };
 }
 
@@ -102,6 +106,7 @@ export async function updateComment(postId, commentId, content) {
     author: result.writerNickname ?? "작성자",
     createdAt: result.createdAt,
     content: result.content,
+    authorProfileImageUrl: resolveImageUrl(result.writerProfileImage),
   };
 }
 
@@ -118,4 +123,19 @@ export async function deletePostApi(postId) {
   await apiFetch(`/board/posts/${encodeURIComponent(postId)}`, {
     method: "DELETE",
   });
+}
+
+export async function toggleCommentLike(postId, commentId, isCurrentlyLiked) {
+  const result = await apiFetch(
+    `/board/posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(
+      commentId
+    )}/likes`,
+    {
+      method: isCurrentlyLiked ? "DELETE" : "POST",
+    }
+  );
+  return {
+    isLiked: parseBoolean(result.liked),
+    likeCount: Number(result.likeCount ?? 0),
+  };
 }

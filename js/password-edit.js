@@ -71,23 +71,6 @@ function updateSubmitButtonState() {
   }
 }
 
-// ---- 토스트 표시 ----
-function showToast(message) {
-  toastEl.textContent = message;
-  toastEl.classList.remove("hidden");
-  // opacity 애니메이션
-  requestAnimationFrame(() => {
-    toastEl.classList.add("show");
-  });
-
-  setTimeout(() => {
-    toastEl.classList.remove("show");
-    setTimeout(() => {
-      toastEl.classList.add("hidden");
-    }, 250);
-  }, 2000);
-}
-
 // ---- 실제 비밀번호 변경 API 호출 ----
 async function updatePasswordApi(newPassword, confirmPassword) {
   await apiFetch(PASSWORD_CHANGE_PATH, {

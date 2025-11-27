@@ -228,15 +228,20 @@ body {
   display: flex;
   gap: 12px;
 }
-
 .comment-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e0e0e0;
+  overflow: hidden;
+  background-color: #eee;
   flex-shrink: 0;
 }
 
+.comment-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .comment-body {
   flex: 1;
 }
@@ -349,4 +354,33 @@ body {
 /* 모달 열렸을 때 body 스크롤 막기 */
 body.modal-open {
   overflow: hidden;
+}
+.comment-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.comment-like-btn:hover {
+  background-color: #f2f2f2;
+}
+
+.comment-like-btn.liked {
+  background-color: #eef2ff;
+  font-weight: 600;
+}
+
+.comment-like-icon {
+  font-size: 13px;
+}
+
+.comment-like-count {
+  font-size: 12px;
 }
