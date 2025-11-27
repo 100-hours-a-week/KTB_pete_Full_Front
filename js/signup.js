@@ -1,9 +1,12 @@
-// js/signup.js
 import { apiFetch } from "./api-fetch.js";
+import {
+  isValidEmail,
+  isValidPassword,
+  PASSWORD_RULE_MESSAGE,
+} from "./validation.js";
+import { showToast } from "./utils.js"
 
-// ===== 상수 =====
 // 백엔드에서 프로필 이미지 필드명을 뭐라고 받는지 맞춰줘야 함.
-// 예: @RequestPart("profileImage") MultipartFile profileImage
 const PROFILE_IMAGE_FIELD_NAME = "profileImage";
 
 // ===== DOM 요소 찾기 =====
@@ -27,21 +30,6 @@ const goLoginBtn = document.getElementById("signup-go-login-btn");
 
 // 실제로 서버로 전송할 파일
 let selectedProfileFile = null;
-
-// ===== 검증 유틸 =====
-function isValidEmail(value) {
-  if (!value) return false;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(value);
-}
-
-function isValidPassword(value) {
-  if (!value) return false;
-  // 8~20자, 대문자/소문자/숫자/특수문자 각각 1개 이상
-  const pwRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|;:'",.<>/?`~]).{8,20}$/;
-  return pwRegex.test(value);
-}
 
 // ===== 폼 전체 검증 + 버튼 상태 갱신 =====
 function validateForm() {
@@ -71,8 +59,7 @@ function validateForm() {
     pwError.classList.remove("hidden");
     isValid = false;
   } else if (!isValidPassword(password)) {
-    pwError.textContent =
-      "비밀번호는 8~20자이며 대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.";
+    pwError.textContent = PASSWORD_RULE_MESSAGE;
     pwError.classList.remove("hidden");
     isValid = false;
   } else {
@@ -175,11 +162,11 @@ async function handleSignup() {
     // result 예시:
     // { id, nickname, email, profileImageUrl ... }
 
-    alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+    showToast("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
     window.location.href = "./login.html";
   } catch (err) {
     console.error(err);
-    alert(err.message || "회원가입에 실패했습니다. 입력 값을 다시 확인해주세요.");
+    showToast(err.message || "회원가입에 실패했습니다. 입력 값을 다시 확인해주세요.");
   }
 }
 

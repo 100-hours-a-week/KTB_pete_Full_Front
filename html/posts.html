@@ -1,14 +1,14 @@
-<!-- html/posts.html -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>게시판 | 아무 말 대잔치</title>
+    <title>게시글 목록 | Breathe</title>
+    <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/posts.css" />
   </head>
   <body>
     <header class="global-header">
-      <h1 class="global-header-title">아무 말 대잔치</h1>
+      <h1 class="global-header-title">Breathe</h1>
 
       <div class="header-profile-wrapper">
         <button
@@ -45,33 +45,44 @@
       </div>
     </header>
 
+    <div id="global-toast" class="toast hidden"></div>
 
-    <main class="container">
-      <div class="board-wrapper">
-        <!-- 인사말 + 게시글 작성 버튼 -->
-        <section class="board-intro">
-          <p class="board-intro-text">
-            안녕하세요,<br />
-            아무 말 대잔치 <span class="bold">게시판</span> 입니다.
-          </p>
+    <main class="post-main">
+      <div class="post-content-wrapper">
+        <!-- 인사 + 작성 버튼 -->
+        <section class="post-intro">
+          <div class="intro-text">
+            <h2 class="intro-title">오늘 하루는 어떠셨나요?</h2>
+            <p class="intro-desc">생각을 잠깐 내려놓고 가볍게 적어보세요.</p>
+          </div>
+
           <button
             id="go-write-btn"
-            class="primary-btn write-btn"
+            class="write-btn"
             type="button"
           >
-            게시글 작성
+            마음 남기기
           </button>
         </section>
 
-        <!-- 게시글 목록 -->
-        <section id="post-list" class="post-list">
-          <!-- JS에서 카드들 동적으로 채움 -->
+        <!-- 정렬 옵션 -->
+        <section class="post-sort-row">
+          <button class="sort-btn active" data-sort="latest">최신순</button>
+          <button class="sort-btn" data-sort="likes">좋아요순</button>
         </section>
 
-        <!-- 게시글이 없을 때 메세지 -->
-        <p id="empty-text" class="empty-text hidden">
-          등록된 게시글이 없습니다.
-        </p>
+        <!-- 캐러셀 영역 -->
+        <section class="post-carousel-section">
+          <div class="post-carousel">
+            <!-- JS에서 .post-card들을 여기에 채움 -->
+            <div id="post-list" class="post-list"></div>
+          </div>
+
+          <p id="empty-text" class="empty-text hidden">
+            아직 작성된 마음이 없어요.<br />
+            가볍게 첫 마음을 남겨보는 건 어떨까요?
+          </p>
+        </section>
       </div>
     </main>
 

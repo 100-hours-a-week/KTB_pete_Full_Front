@@ -1,148 +1,230 @@
-/* css/posts.css */
-/* 공통 */
 @import url("./header.css");
 @import url("./auth-common.css");
 
 body {
   margin: 0;
-  padding: 0;
   font-family: "Pretendard", sans-serif;
-  background: #f5f5f5;
+  background: radial-gradient(circle at top, #e8eeff 0%, #f5f7fb 55%, #f9fafb 100%);
 }
 
-/* 메인 영역 */
-.container {
+/* 메인 영역 전체 위치 */
+.post-main {
   width: 100%;
   min-height: calc(100vh - 100px);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 16px 40px;
+  justify-content: center;
+  padding: 110px 16px 40px;
   box-sizing: border-box;
 }
 
-/* 인사말 + 래퍼 */
-.board-wrapper {
+.post-content-wrapper {
   width: 100%;
-  max-width: 700px;
+  max-width: 1100px;
 }
 
-/* 인사말 */
-.board-intro {
-  margin-top: 16px;
-  margin-bottom: 20px;
-  text-align: center;
-  position: relative;
-  width: 100%;
+/* 인사 영역과 카드 사이 간격 넉넉하게 */
+.post-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;  /* 20px → 28px */
 }
 
-.board-intro-text {
-  font-size: 20px;
-  line-height: 30px;
+.intro-text {
+  max-width: 70%;
 }
 
-.bold {
+.intro-title {
+  font-size: 26px;
   font-weight: 700;
+  margin: 0 0 6px;
+  color: #1f2937;
 }
 
-/* 게시글 작성 버튼 */
+.intro-desc {
+  margin: 0;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+/* 고민 남기기 버튼 */
 .write-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 140px;
-  height: 40px;
-  border-radius: 8px;
+  width: 150px;
+  height: 44px;
+  border-radius: 999px;
+  border: none;
   background: #aca0eb;
   color: white;
   font-size: 14px;
-  border: none;
   cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
-/* 마우스 올렸을 때: 7F6AEE */
 .write-btn:hover {
   background-color: #7f6aee;
+  transform: translateY(-1px);
 }
 
-/* 포커스(키보드 탭) 시에도 같은 느낌 */
-.write-btn:focus-visible {
-  outline: none;
-  background-color: #7f6aee;
-}
-
-/* 게시글 목록 */
-.post-list {
-  width: 100%;
-  max-width: 620px;
-  max-height: 700px;
-  overflow-y: auto;
-  padding: 10px 0 40px;
-  box-sizing: border-box;
-}
-
-/* 게시글 카드 */
-.post-card {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* 상단 */
-.post-header {
+/* 정렬 버튼 */
+.post-sort-row {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 26px;
 }
 
+.sort-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  color: #6b7280;
+  transition: 0.15s;
+}
+
+.sort-btn.active {
+  background: #7f6aee;
+  border-color: #7f6aee;
+  color: #ffffff;
+}
+
+/* 캐러셀 영역 */
+.post-carousel-section {
+  margin-top: 8px;
+}
+
+/* 가로 스크롤 트랙 */
+.post-carousel {
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin: 0 -32px;              /* 양 옆 여백을 조금 더 쓰기 위해 음수 마진 */
+}
+
+.post-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+.post-carousel::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.6);
+  border-radius: 999px;
+}
+.post-carousel::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* 실제 카드 리스트 */
+.post-list {
+  display: flex;
+  gap: 24px;
+  padding: 10px 32px 20px;      /* 위에서 준 음수 마진과 맞춰서 */
+  box-sizing: border-box;
+
+  scroll-snap-type: x mandatory;
+}
+
+.post-card {
+  scroll-snap-align: center;
+
+  flex: 0 0 320px;
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+
+  padding: 20px 22px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+  opacity: 0.85;
+}
+
+.post-card.active {
+  transform: scale(1.08);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28);
+  opacity: 1;
+}
+
+/* 카드 내부 구조는 기존 그대로 재사용 가능 */
 .post-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
+  margin: 0 0 4px;
+  color: #111827;
 }
 
 .post-meta-top {
-  font-size: 14px;
-  color: #666;
-  white-space: nowrap;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
 }
 
-/* 날짜 */
 .post-date {
-  font-size: 14px;
-  color: #999;
+  font-size: 12px;
+  color: #9ca3af;
 }
 
-/* 작성자 */
+/* 하단 작성자 */
 .post-footer {
-  margin-top: 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .post-author-avatar {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   background: #ddd;
   border-radius: 50%;
 }
 
 .post-author-name {
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: #4b5563;
 }
 
-/* 빈 상태 */
+/* 빈 상태 텍스트 */
 .empty-text {
-  margin-top: 20px;
+  margin-top: 32px;
   font-size: 14px;
-  color: #999;
+  color: #9ca3af;
   text-align: center;
 }
 
-.hidden {
-  display: none;
+/* 반응형: 화면이 좁아지면 카드 크기 조금 줄이기 */
+@media (max-width: 900px) {
+  .post-main {
+    padding: 24px 8px 40px;
+  }
+
+  .post-content-wrapper {
+    max-width: 100%;
+  }
+
+  .post-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .intro-text {
+    max-width: 100%;
+  }
+
+  .post-carousel {
+    margin: 0 -16px;
+  }
+
+  .post-list {
+    padding: 10px 16px 20px;
+  }
+
+  .post-card {
+    flex: 0 0 220px;
+  }
 }

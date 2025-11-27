@@ -1,7 +1,11 @@
-// js/password-edit.js
 // 비밀번호 수정 페이지 전용 스크립트
 import { initHeader } from "./header.js";
 import { apiFetch } from "./api-fetch.js";
+import {
+  isValidPassword,
+  PASSWORD_RULE_MESSAGE,
+} from "./validation.js";
+import { showToast } from "./utils.js"
 
 initHeader();
 
@@ -20,11 +24,6 @@ const toastEl = document.getElementById("toast");
 let isPasswordValid = false;
 let isConfirmValid = false;
 
-// ---- 비밀번호 규칙 ----
-// 8~20자, 대문자/소문자/숫자/특수문자 각 1개 이상
-const passwordRuleRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,20}$/;
-
 // ---- 유효성 검사 ----
 function validatePassword() {
   const value = passwordInput.value.trim();
@@ -35,18 +34,15 @@ function validatePassword() {
     return;
   }
 
-  if (!passwordRuleRegex.test(value)) {
-    passwordHelper.textContent =
-      "*비밀번호는 8~20자이며 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.";
+  if (!isValidPassword(value)) {
+    passwordHelper.textContent = `*${PASSWORD_RULE_MESSAGE}`;
     isPasswordValid = false;
     return;
   }
 
-  // 규칙 통과
   passwordHelper.textContent = "";
   isPasswordValid = true;
 }
-
 function validatePasswordConfirm() {
   const value = passwordConfirmInput.value.trim();
   const passwordValue = passwordInput.value.trim();
@@ -75,34 +71,13 @@ function updateSubmitButtonState() {
   }
 }
 
-// ---- 토스트 표시 ----
-function showToast(message) {
-  toastEl.textContent = message;
-  toastEl.classList.remove("hidden");
-  // opacity 애니메이션
-  requestAnimationFrame(() => {
-    toastEl.classList.add("show");
-  });
-
-  setTimeout(() => {
-    toastEl.classList.remove("show");
-    setTimeout(() => {
-      toastEl.classList.add("hidden");
-    }, 250);
-  }, 2000);
-}
-
 // ---- 실제 비밀번호 변경 API 호출 ----
 async function updatePasswordApi(newPassword, confirmPassword) {
-  // apiFetch가 알아서:
-  // - Content-Type: application/json
-  // - Authorization: Bearer <token> (localStorage.accessToken)
-  // 붙여서 호출함
   await apiFetch(PASSWORD_CHANGE_PATH, {
     method: "PATCH",
     body: {
-      newPassword,      // ✅ 백엔드 DTO 필드명과 일치
-      confirmPassword,  // ✅ 백엔드 DTO 필드명과 일치
+      newPassword,  
+      confirmPassword, 
     },
   });
 }
@@ -150,7 +125,7 @@ form.addEventListener("submit", async (event) => {
     updateSubmitButtonState();
   } catch (error) {
     console.error(error);
-    alert(error.message || "비밀번호 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
+    showToast(error.message || "비밀번호 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
     updateSubmitButtonState();
   }
 });

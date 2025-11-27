@@ -1,44 +1,21 @@
-<!-- html/post-detail.html -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>게시글 상세 | 아무 말 대잔치</title>
+    <title>게시글 상세 | Breathe</title>
     <link rel="stylesheet" href="../css/post-detail.css" />
   </head>
   <body>
     <header class="global-header">
-      <!-- 뒤로가기 버튼 -->
-      <button
-        id="back-btn"
-        class="back-btn"
-        type="button"
-        aria-label="게시판으로 돌아가기"
-      >
-        &lt;
-      </button>
-
-      <h1 class="global-header-title">아무 말 대잔치</h1>
+      <h1 class="global-header-title">Breathe</h1>
 
       <div class="header-profile-wrapper">
-        <button
-          id="header-profile-btn"
-          class="header-profile-btn"
-          type="button"
-        >
-          <img
-            src="../img/dummy.png"
-            alt="프로필"
-            class="header-profile-img"
-          />
+        <button id="header-profile-btn" class="header-profile-btn" type="button">
+          <img src="../img/dummy.png" alt="프로필" class="header-profile-img" />
         </button>
 
         <div id="profile-dropdown" class="profile-dropdown hidden">
-          <button
-            type="button"
-            class="dropdown-item"
-            data-action="edit-profile"
-          >
+          <button type="button" class="dropdown-item" data-action="edit-profile">
             회원정보수정
           </button>
           <button
@@ -55,121 +32,131 @@
       </div>
     </header>
 
-    <main class="detail-container">
-      <!-- 제목 / 작성자 -->
-      <section class="post-header-section">
-        <h2 id="post-title" class="post-title">제목 1</h2>
+    <div id="global-toast" class="toast hidden"></div>
 
-        <div class="post-meta-row">
-          <div class="post-author">
-            <div class="post-author-avatar"></div>
-            <div class="post-author-info">
-              <p id="post-author-name" class="author-name">더미 작성자 1</p>
-              <p id="post-created-at" class="author-date">
-                2021-01-01 00:00:00
-              </p>
+    <!-- 전체 페이지 컨테이너 -->
+    <main class="detail-container">
+      <div class="detail-inner">
+      <!-- 새 뒤로가기 버튼 -->
+      <button
+        id="back-btn"
+        class="back-chip"
+        type="button"
+        aria-label="게시판으로 돌아가기"
+      >
+        ← 고민 목록으로
+      </button>
+      <!-- 하나의 큰 카드 느낌 -->
+      <div class="detail-card">
+        <!-- 제목 / 작성자 -->
+        <section class="post-header-section">
+          <div class="post-label">오늘의 고민</div>
+          <h2 id="post-title" class="post-title"></h2>
+
+          <div class="post-meta-row">
+            <div class="post-author">
+              <img
+                id="post-author-avatar"
+                class="post-author-avatar"
+                src="../img/dummy.png"
+                alt="작성자 프로필"
+              />
+
+              <div class="post-author-info">
+                <p id="post-author-name" class="author-name"></p>
+                <p id="post-created-at" class="author-date"></p>
+              </div>
+            </div>
+
+            <div class="post-actions">
+              <button id="edit-post-btn" class="outline-btn" type="button">
+                수정
+              </button>
+              <button id="delete-post-btn" class="outline-btn danger" type="button">
+                삭제
+              </button>
             </div>
           </div>
+        </section>
 
-          <div class="post-actions">
-            <button id="edit-post-btn" class="outline-btn" type="button">
-              수정
-            </button>
+        <!-- 이미지 + 본문 -->
+        <section class="post-content-section">
+          <div id="post-image" class="post-image-placeholder">
+            <img
+              id="post-image-tag"
+              class="post-image-img hidden"
+              src=""
+              alt="게시글 이미지"
+            />
+          </div>
+
+          <p id="post-content" class="post-content"></p>
+        </section>
+
+        <!-- 좋아요 / 조회수 / 댓글수 -->
+        <section class="post-stats-section">
+          <button id="like-btn" class="stat-card like disabled" type="button">
+            <span class="stat-chip-label">마음 내밀기</span>
+            <span id="like-count" class="stat-number"></span>
+          </button>
+          <div class="stat-card">
+            <span class="stat-chip-label">조회수</span>
+            <span id="view-count" class="stat-number"></span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-chip-label">댓글</span>
+            <span id="comment-count" class="stat-number"></span>
+          </div>
+        </section>
+
+        <!-- 댓글 입력 -->
+        <section class="comment-input-section">
+          <div class="comment-input-header">
+            <h3 class="comment-title">한마디 남겨볼까요?</h3>
+            <p class="comment-subtitle">
+              가볍게 한 줄만 적어도 괜찮아요. 당신의 말이 누군가에게 숨 쉴 틈이 될 수 있어요.
+            </p>
+          </div>
+
+          <label for="comment-input" class="comment-label">댓글</label>
+
+          <textarea
+            id="comment-input"
+            class="comment-input"
+            rows="4"
+            placeholder="따뜻한 한마디를 남겨주세요."
+          ></textarea>
+
+          <div class="comment-input-actions">
             <button
-              id="delete-post-btn"
-              class="outline-btn danger"
+              id="submit-comment-btn"
+              class="primary-btn disabled"
               type="button"
+              disabled
             >
-              삭제
+              댓글 등록
             </button>
           </div>
-        </div>
-        <hr class="divider" />
-      </section>
+        </section>
 
-      <!-- 이미지 + 본문 -->
-      <section class="post-content-section">
-        <div id="post-image" class="post-image-placeholder">
-          <img
-            id="post-image-tag"
-            class="post-image-img hidden"
-            src=""
-            alt="게시글 이미지"
-          />
-        </div>
-        <p id="post-content" class="post-content">
-          무엇을 얘기할까요? 아무말이라면, 실은 항상 불편한 말일이라
-          생각합니다. 우리는 매일 새로운 경험을 하고 매번 성장합니다. 때로는
-          어려움을 겪으며 아플 때도 있지만, 그것들이 우리의 한 걸음을 내딛게
-          하는 동력이 되기도 합니다. …
-        </p>
-      </section>
-
-      <!-- 좋아요 / 조회수 / 댓글수 -->
-      <section class="post-stats-section">
-        <button id="like-btn" class="stat-card like disabled" type="button">
-          <span id="like-count" class="stat-number">123</span>
-          <span class="stat-label">좋아요수</span>
-        </button>
-        <div class="stat-card">
-          <span id="view-count" class="stat-number">123</span>
-          <span class="stat-label">조회수</span>
-        </div>
-        <div class="stat-card">
-          <span id="comment-count" class="stat-number">123</span>
-          <span class="stat-label">댓글</span>
-        </div>
-      </section>
-
-      <!-- 댓글 입력 -->
-      <section class="comment-input-section">
-        <label for="comment-input" class="comment-label">
-          댓글을 남겨주세요!
-        </label>
-        <textarea
-          id="comment-input"
-          class="comment-input"
-          rows="4"
-          placeholder="댓글을 남겨주세요!"
-        ></textarea>
-        <div class="comment-input-actions">
-          <button
-            id="submit-comment-btn"
-            class="primary-btn disabled"
-            type="button"
-            disabled
-          >
-            댓글 등록
-          </button>
-        </div>
-      </section>
-
-      <!-- 댓글 리스트 -->
-      <section class="comment-list-section">
-        <div id="comment-list" class="comment-list">
-          <!-- JS에서 댓글 카드들 동적으로 렌더링 -->
-        </div>
-      </section>
+        <!-- 댓글 리스트 -->
+        <section class="comment-list-section">
+          <h3 class="comment-list-title">이 고민에 달린 이야기들</h3>
+          <div id="comment-list" class="comment-list"></div>
+        </section>
+      </div>
     </main>
 
     <!-- 게시글 삭제 모달 -->
     <div id="post-delete-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <p class="modal-title">게시글을 삭제하시겠습니까?</p>
-        <p class="modal-desc">삭제한 내용은 복구 할 수 없습니다.</p>
+        <p class="modal-desc">삭제한 내용은 복구할 수 없습니다.</p>
         <div class="modal-actions">
-          <button
-            id="cancel-post-delete-btn"
-            class="modal-btn cancel"
-            type="button"
-          >
+          <button id="cancel-post-delete-btn" class="modal-btn cancel" type="button">
             취소
           </button>
-          <button
-            id="confirm-post-delete-btn"
-            class="modal-btn confirm"
-            type="button"
-          >
+          <button id="confirm-post-delete-btn" class="modal-btn confirm" type="button">
             확인
           </button>
         </div>
@@ -180,7 +167,7 @@
     <div id="comment-delete-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <p class="modal-title">댓글을 삭제하시겠습니까?</p>
-        <p class="modal-desc">삭제한 내용은 복구 할 수 없습니다.</p>
+        <p class="modal-desc">삭제한 내용은 복구할 수 없습니다.</p>
         <div class="modal-actions">
           <button
             id="cancel-comment-delete-btn"

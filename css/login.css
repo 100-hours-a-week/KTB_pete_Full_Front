@@ -1,3 +1,208 @@
-/* css/login.css */
 @import url("./auth-common.css");
 
+/* =========================
+   Breathe 로그인 전용 스타일
+   ========================= */
+
+/* 전체 레이아웃: 좌/우 분할 */
+.auth-split {
+  display: flex;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #e8eeff 0%, #f5f7fb 55%, #f9fafb 100%);
+}
+
+/* 왼쪽 영역 (로그인) */
+.auth-left.container {
+  flex: 0 0 50%;          /* 화면 왼쪽 절반 */
+  max-width: 50%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center;     /* 세로 중앙 */
+
+  padding: 0 48px;
+  box-sizing: border-box;
+}
+
+/* auth-common의 .container 기본 정렬 덮어쓰기 */
+.container {
+  justify-content: center;
+  align-items: center;
+}
+
+/* 로그인 카드 */
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  padding: 32px 32px 28px;
+  box-shadow: 0 18px 40px rgba(148, 163, 184, 0.35);
+}
+
+/* 상단 텍스트들 */
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background-color: #e8eeff;
+  color: #4b5563;
+  margin-bottom: 10px;
+}
+
+.auth-title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.auth-subtitle .brand {
+  font-weight: 600;
+  color: #7c83fd;
+}
+
+/* 인풋 간격 */
+.input-group {
+  margin-bottom: 18px;
+}
+
+/* 버튼은 pill 형태 */
+.primary-btn,
+.secondary-btn {
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+/* 비활성 */
+.primary-btn.disabled,
+.primary-btn:disabled {
+  background: #c7d2fe;
+  color: #ffffff;
+}
+
+/* 활성 (JS에서 active 클래스 토글한다고 가정) */
+.primary-btn.active {
+  background: #7c83fd;
+  color: #ffffff;
+}
+
+/* 서브 버튼 */
+.secondary-btn {
+  margin-top: 10px;
+  background: #ffffff;
+  border-radius: 999px;
+  border: 1px solid #7c83fd;
+  color: #4b5563;
+}
+
+.secondary-btn:hover {
+  background-color: #eef2ff;
+}
+
+/* 포커스 */
+button:focus,
+input:focus {
+  outline: none;
+  border-color: #7c83fd;
+}
+
+/* 하단 익명 안내 */
+.auth-footer-text {
+  margin-top: 18px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.auth-footer-text strong {
+  color: #7c83fd;
+  font-weight: 600;
+}
+
+/* 오른쪽 영역 (브랜드 패널) */
+.auth-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  box-sizing: border-box;
+}
+
+.brand-panel {
+  max-width: 600px;
+  width: 100%;
+}
+
+/* 브랜드 마크 글자 크기 조금 키우기 + 여백 */
+.brand-mark {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #7c83fd;
+  margin-bottom: 24px;
+}
+
+/* 메인 카피 크게 */
+.brand-title {
+  font-size: 40px;     /* 기존 32px → 40px */
+  line-height: 1.4;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px;
+}
+
+/* 아래 Breathe. 도 살짝 키우기 */
+.brand-tagline {
+  font-size: 20px;     /* 기존 18px → 20px */
+  font-weight: 500;
+  color: #6b7280;
+}
+
+
+/* 반응형: 모바일에서는 위아래로 쌓기 */
+@media (max-width: 900px) {
+  .auth-split {
+    flex-direction: column;
+  }
+
+  .auth-left.container {
+    flex: none;
+    max-width: 100%;
+    min-height: auto;
+    padding: 24px 16px;
+  }
+
+  .auth-right {
+    padding: 24px 20px 40px;
+  }
+
+  .brand-panel {
+    text-align: center;
+  }
+
+  .brand-title {
+    font-size: 24px;
+  }
+}

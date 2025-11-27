@@ -1,22 +1,22 @@
-<!-- html/post-edit.html -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>게시글 수정 | 아무 말 대잔치</title>
+    <title>게시글 수정 | Breathe</title>
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/post-edit.css" />
   </head>
   <body>
+    <!-- 공통 헤더 -->
     <header class="global-header">
-      <button
-        id="back-btn"
-        class="back-btn"
-        type="button"
-        aria-label="게시판으로 돌아가기"
-      >
-        &lt;
-      </button>
-      <h1 class="global-header-title">아무 말 대잔치</h1>
+      <div class="header-back-area">
+        <button id="back-btn" class="back-btn" type="button" aria-label="이전 페이지로">
+          ←
+        </button>
+      </div>
+
+      <h1 class="global-header-title">Breathe</h1>
 
       <div class="header-profile-wrapper">
         <button
@@ -53,72 +53,88 @@
       </div>
     </header>
 
-    <main class="edit-container">
-      <h2 class="page-title">게시글 수정</h2>
+    <div id="global-toast" class="toast hidden"></div>
 
-      <form id="post-edit-form" class="edit-form">
-        <!-- 제목 -->
-        <section class="form-section">
-          <label for="title-input" class="form-label">
-            제목<span class="required">*</span>
-          </label>
-          <input
-            id="title-input"
-            class="text-input"
-            type="text"
-            placeholder="제목을 입력해주세요"
-            maxlength="26"
-          />
-          <div class="helper-row">
-            <span id="title-length" class="helper-text">0 / 26</span>
-          </div>
-        </section>
+    <main class="edit-page">
+      <!-- 상단 카피 영역 (작성 페이지와 톤 맞추기) -->
+      <section class="edit-header">
+        <span class="badge-tag">오늘의 고민</span>
+        <h2 class="edit-title">이 기록을 조금 다듬어볼까요?</h2>
+        <p class="edit-subtitle">
+          이미 남겨둔 이야기를 가볍게 고쳐도 괜찮아요. 그때의 나와 지금의 나를 천천히 이어볼게요.
+        </p>
+      </section>
 
-        <!-- 내용 -->
-        <section class="form-section">
-          <label for="content-input" class="form-label">
-            내용<span class="required">*</span>
-          </label>
-          <textarea
-            id="content-input"
-            class="textarea-input"
-            rows="10"
-            placeholder="내용을 입력해주세요"
-          ></textarea>
-        </section>
-
-        <!-- 이미지 업로드 -->
-        <section class="form-section">
-          <label class="form-label">
-            이미지<span class="required">*</span>
-          </label>
-          <div class="file-row">
-            <label for="image-input" class="file-label">파일 선택</label>
+      <!-- 작성 카드 -->
+      <section class="edit-card">
+        <form id="post-edit-form" class="edit-form">
+          <!-- 제목 -->
+          <section class="form-section">
+            <label for="title-input" class="form-label">
+              제목<span class="required">*</span>
+            </label>
             <input
-              id="image-input"
-              class="file-input"
-              type="file"
-              accept="image/*"
+              id="title-input"
+              class="text-input"
+              type="text"
+              placeholder="짧게 한 줄 제목을 남겨주세요. (최대 26자)"
+              maxlength="26"
             />
-            <span id="file-name" class="file-name">기존 파일 명</span>
-          </div>
-          <p class="helper-text">
-            이미지는 1개만 업로드 할 수 있습니다.
-          </p>
-        </section>
+            <div class="helper-row">
+              <span id="title-length" class="helper-text">0 / 26</span>
+            </div>
+          </section>
 
-        <!-- 버튼 -->
-        <section class="form-section button-section">
-          <button
-            id="submit-edit-btn"
-            class="primary-btn disabled"
-            type="button"
-            disabled
-          >
-            수정하기
-          </button>
-        </section>
-      </form>
+          <!-- 내용 -->
+          <section class="form-section">
+            <label for="content-input" class="form-label">
+              내용<span class="required">*</span>
+            </label>
+            <textarea
+              id="content-input"
+              class="textarea-input"
+              rows="10"
+              placeholder="그때 남겼던 이야기 중에서, 살리고 싶은 말과 고치고 싶은 말을 적어주세요."
+            ></textarea>
+          </section>
+
+          <!-- 이미지 업로드 -->
+          <section class="form-section">
+            <label class="form-label">
+              이미지<span class="required">*</span>
+            </label>
+            <p class="label-description">
+              지금 올려둔 이미지를 그대로 둘 수도 있고, 다른 사진으로 바꿀 수도 있어요.
+            </p>
+
+            <div class="file-row">
+              <label for="image-input" class="file-label">이미지 변경</label>
+              <input
+                id="image-input"
+                class="file-input"
+                type="file"
+                accept="image/*"
+              />
+              <span id="file-name" class="file-name">기존 파일 명</span>
+            </div>
+            <p class="helper-text small">
+              이미지는 1개만 업로드 할 수 있습니다.
+            </p>
+          </section>
+
+          <!-- 버튼 -->
+          <section class="form-section button-section">
+            <button
+              id="submit-edit-btn"
+              class="primary-btn disabled"
+              type="button"
+              disabled
+            >
+              마음 고치기
+            </button>
+          </section>
+        </form>
+      </section>
     </main>
 
     <script type="module" src="../js/post-edit.js"></script>
