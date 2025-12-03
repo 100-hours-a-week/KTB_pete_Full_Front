@@ -11,7 +11,7 @@ function parseBoolean(value) {
 export async function fetchPostDetail(postId) {
   const detail = await apiFetch(`/board/posts/${encodeURIComponent(postId)}`, {
     method: "GET",
-    includeAuth: false,
+    includeAuth: true,
   });
 
   return {
@@ -52,7 +52,7 @@ export async function fetchComments(postId, page, size) {
 
   const result = await apiFetch(
     `/board/posts/${encodeURIComponent(postId)}/comments?${params.toString()}`,
-    { method: "GET", includeAuth: false }
+    { method: "GET", includeAuth: true}
   );
 
   const items = Array.isArray(result.items) ? result.items : [];
@@ -86,7 +86,9 @@ export async function createComment(postId, content) {
     author: result.writerNickname ?? "작성자",
     createdAt: result.createdAt,
     content: result.content,
-    authorProfileImageUrl: resolveImageUrl(result.writerProfileImage),
+    profileImageUrl: resolveImageUrl(result.writerProfileImage),
+    likeCount: Number(result.likes ?? 0),
+    isLiked: parseBoolean(result.liked), 
   };
 }
 
@@ -106,7 +108,9 @@ export async function updateComment(postId, commentId, content) {
     author: result.writerNickname ?? "작성자",
     createdAt: result.createdAt,
     content: result.content,
-    authorProfileImageUrl: resolveImageUrl(result.writerProfileImage),
+    profileImageUrl: resolveImageUrl(result.writerProfileImage),
+    likeCount: Number(result.likes ?? 0),
+    isLiked: parseBoolean(result.liked), 
   };
 }
 
