@@ -26,17 +26,16 @@ export function createCommentModule({
   let editingCommentId = null;
   let deletingCommentId = null;
 
-  // innerHTML 제거 -> createElement
-function createCommentCard(comment, { onEdit, onDelete }) {
-  const {
-    id,
-    author,
-    createdAt,
-    content,
-    profileImageUrl,
-    likeCount = 0,
-    isLiked = false,
-  } = comment;
+  function createCommentCard(comment, { onEdit, onDelete }) {
+    const {
+      id,
+      author,
+      createdAt,
+      content,
+      profileImageUrl,
+      likeCount = 0,
+      isLiked = false,
+    } = comment;
 
   const card = document.createElement("div");
   card.className = "comment-card";
@@ -108,8 +107,13 @@ function createCommentCard(comment, { onEdit, onDelete }) {
   likeBtn.addEventListener("click", async () => {
     if (!ensureActionAuth()) return;
 
+    // 🔥 현재 화면에서 눌려 있는지 여부를 기준으로 보자
+    const isCurrentlyLiked = likeBtn.classList.contains("liked");
+
     try {
-      const result = await toggleCommentLike(postId, id, comment.isLiked);
+      const result = await toggleCommentLike(postId, id, isCurrentlyLiked);
+
+      // 서버가 말해준 정답으로 state 동기화
       comment.isLiked = result.isLiked;
       comment.likeCount = result.likeCount;
 
