@@ -1,9 +1,9 @@
 # 🌿 **Breathe – Frontend**
 ### 감정을 편하게 기록하고 공유할 수 있는 멘탈 헬스 기반 커뮤니티 서비스
-
+<br><br>
 **Breathe**는 익명 기반 감정 공유 커뮤니티로,  
 누구나 가볍게 자신의 고민과 감정을 기록하고 공감받을 수 있는 공간을 목표로 합니다.
-
+<br><br>
 Frontend는 **Vanilla JavaScript + 모듈 구조**로 직접 설계하였고,  
 Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 구현했습니다.
 
@@ -85,14 +85,11 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 
 # ▶️ **실행 방법**
 
-git clone https://github.com/100-hours-a-week/KTB_pete_Full_Front.git <br>
-cd KTB_pete_Full_Front<br>
-VSCode에서 Live Server 실행
-<br>
-/html/login.html 열기
-<br>
-Backend(Spring Boot)를 8080 포트에서 실행
-<br>
+git clone https://github.com/100-hours-a-week/KTB_pete_Full_Front.git <br><br>
+cd KTB_pete_Full_Front<br><br>
+VSCode에서 Live Server 실행<br><br>
+/html/login.html 열기<br><br>
+Backend(Spring Boot)를 8080 포트에서 실행<br><br>
 로그인 후 전체 기능 이용 가능
 
 <br><br>
