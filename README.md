@@ -62,45 +62,42 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 # 📁 **폴더 구조**
 
 /css
-common.css
-header.css
-posts.css
-posts-list.css
-...
+    common.css
+    header.css
+    posts.css
+    posts-list.css
+    ...
 /html
-login.html
-signup.html
-posts.html
-posts-list.html
-post-detail.html
-post-create.html
-profile-edit.html
-password-edit.html
+    login.html
+    signup.html
+    posts.html
+    posts-list.html
+    post-detail.html
+    post-create.html
+    profile-edit.html
+    password-edit.html
 /js
-api-fetch.js
-auth.js
-header.js
-posts.js
-post-detail.js
-post-detail-api.js
-post-detail-comments.js
-post-create.js
-post-edit.js
-posts-list.js
-profile-edit.js
-signup.js
-validation.js
-utils.js
+    api-fetch.js
+    auth.js
+    header.js
+    posts.js
+    post-detail.js
+    post-detail-api.js
+    post-detail-comments.js
+    post-create.js
+    post-edit.js
+    posts-list.js
+    profile-edit.js
+    signup.js
+    validation.js
+    utils.js
 /img
-
-markdown
-코드 복사
 
 <br><br>
 
 ---
 
-# 🔗 **공통 모듈 요약 (포트폴리오 버전)**
+# 🔗 **공통 모듈 요약 **
 
 ### **`apiFetch`**
 - 모든 네트워크 요청을 처리하는 공통 Fetch 모듈  
@@ -126,13 +123,6 @@ markdown
 
 # 🔐 **인증 플로우 이미지 삽입 위치**
 
-> 아래 영역에 **인증 플로우 다이어그램 이미지**를 삽입하면 됩니다.  
-> (예: PNG / JPG / GIF)
-
-[여기에 인증 플로우 이미지 혹은 캡처 삽입]
-
-yaml
-코드 복사
 
 <br><br>
 
@@ -140,14 +130,14 @@ yaml
 
 # ▶️ **실행 방법**
 
-git clone https://github.com/100-hours-a-week/KTB_pete_Full_Front.git
-cd KTB_pete_Full_Front
+git clone https://github.com/100-hours-a-week/KTB_pete_Full_Front.git <br>
+cd KTB_pete_Full_Front<br>
 VSCode에서 Live Server 실행
-
+<br>
 /html/login.html 열기
-
+<br>
 Backend(Spring Boot)를 8080 포트에서 실행
-
+<br>
 로그인 후 전체 기능 이용 가능
 
 <br><br>
@@ -190,12 +180,10 @@ WebSocket 실시간 댓글
 <br><br>
 
 🎬 시연 이미지 / 영상 삽입 위치
-css
-코드 복사
-[여기에 시연 GIF / 이미지 / YouTube 링크 삽입]
+
 <br><br>
 
 📌 레포지토리 안내
 Frontend (현재 레포)
 
-Backend: https://github.com/100-hours-a-week/KTB_pete_Full_Backend
+Backend: https://github.com/100-hours-a-week/KTB_pete_Full
