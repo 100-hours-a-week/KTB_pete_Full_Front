@@ -1,11 +1,10 @@
-<!-- posts.html -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>게시글 목록 | Breathe</title>
+    <title>전체 게시글 목록 | Breathe</title>
     <link rel="stylesheet" href="../css/header.css" />
-    <link rel="stylesheet" href="../css/posts.css" />
+    <link rel="stylesheet" href="../css/posts-list.css" />
   </head>
   <body>
     <header class="global-header">
@@ -50,21 +49,22 @@
 
     <main class="post-main">
       <div class="post-content-wrapper">
-        <!-- 인사 + 작성 버튼 -->
-        <section class="post-intro">
+        <!-- 상단 타이틀 -->
+        <section class="post-intro list-intro">
           <div class="intro-text">
-            <h2 class="intro-title">오늘 하루는 어떠셨나요?</h2>
-            <p class="intro-desc">생각을 잠깐 내려놓고 가볍게 적어보세요.</p>
+            <h2 class="intro-title">게시글 목록</h2>
+            <p class="intro-desc">
+              전체 게시글을 한 눈에 확인하고, 관심 있는 글을 찾아보세요.
+            </p>
           </div>
 
-          <!-- 버튼 2개로 변경 -->
           <div class="intro-actions">
             <button
-              id="go-list-btn"
+              id="go-main-btn"
               class="list-btn"
               type="button"
             >
-              게시글 목록
+              메인으로
             </button>
 
             <button
@@ -79,25 +79,41 @@
 
         <!-- 정렬 옵션 -->
         <section class="post-sort-row">
-          <button class="sort-btn active" data-sort="latest">최신순</button>
-          <button class="sort-btn" data-sort="likes">좋아요순</button>
+          <button
+            class="sort-btn active"
+            data-sort="latest"
+            id="sort-latest-btn"
+          >
+            최신순
+          </button>
+          <button
+            class="sort-btn"
+            data-sort="likes"
+            id="sort-likes-btn"
+          >
+            좋아요순
+          </button>
         </section>
 
-        <!-- 캐러셀 영역 -->
-        <section class="post-carousel-section">
-          <div class="post-carousel">
-            <!-- JS에서 .post-card들을 여기에 채움 -->
-            <div id="post-list" class="post-list"></div>
-          </div>
+        <!-- 전체 목록 -->
+        <section class="post-list-section">
+          <ul id="post-table" class="post-table">
+            <!-- JS에서 li.post-row를 채움 -->
+          </ul>
 
-          <p id="empty-text" class="empty-text hidden">
-            아직 작성된 마음이 없어요.<br />
-            가볍게 첫 마음을 남겨보는 건 어떨까요?
+          <p id="list-empty-text" class="empty-text hidden">
+            아직 작성된 게시글이 없습니다.
           </p>
+
+          <div class="pagination">
+            <button id="prev-page-btn" class="page-btn">이전</button>
+            <span id="page-info" class="page-info"></span>
+            <button id="next-page-btn" class="page-btn">다음</button>
+          </div>
         </section>
       </div>
     </main>
 
-    <script type="module" src="../js/posts.js"></script>
+    <script type="module" src="../js/posts-list.js"></script>
   </body>
 </html>

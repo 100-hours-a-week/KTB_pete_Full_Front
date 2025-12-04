@@ -17,6 +17,7 @@ const USE_MOCK_POSTS = false;
 const postListEl = document.getElementById("post-list");
 const emptyTextEl = document.getElementById("empty-text");
 const goWriteBtn = document.getElementById("go-write-btn");
+const goListBtn = document.getElementById("go-list-btn");
 const carouselEl = document.querySelector(".post-carousel");
 
 // ------------------------------
@@ -422,6 +423,11 @@ postListEl.addEventListener("scroll", throttledHandleScroll);
 if (goWriteBtn) {
   goWriteBtn.addEventListener("click", () => {
     window.location.href = "./post-create.html";
+  });
+}
+if (goListBtn) {
+  goListBtn.addEventListener("click", () => {
+    window.location.href = "./posts-list.html"; // 새 목록 페이지
   });
 }
 

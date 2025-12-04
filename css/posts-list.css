@@ -1,0 +1,246 @@
+@import url("./header.css");
+@import url("./auth-common.css");
+
+body {
+  margin: 0;
+  font-family: "Pretendard", sans-serif;
+  background: radial-gradient(circle at top, #e8eeff 0%, #f5f7fb 55%, #f9fafb 100%);
+}
+
+.post-main {
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  display: flex;
+  justify-content: center;
+  padding: 110px 16px 40px;
+  box-sizing: border-box;
+}
+
+.post-content-wrapper {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* 상단 영역 (posts.css와 유사) */
+.post-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+.intro-text {
+  max-width: 70%;
+}
+
+.intro-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #1f2937;
+}
+
+.intro-desc {
+  margin: 0;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 기존 메인과 동일한 버튼 스타일 */
+.write-btn {
+  width: 150px;
+  height: 44px;
+  border-radius: 999px;
+  border: none;
+  background: #aca0eb;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.write-btn:hover {
+  background-color: #7f6aee;
+  transform: translateY(-1px);
+}
+
+.list-btn {
+  width: 120px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.list-btn:hover {
+  background-color: #f3f4ff;
+  color: #4f46e5;
+  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.35);
+  transform: translateY(-1px);
+}
+
+/* 정렬 버튼 (posts.css와 동일) */
+.post-sort-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sort-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  color: #6b7280;
+  transition: 0.15s;
+}
+
+.sort-btn.active {
+  background: #7f6aee;
+  border-color: #7f6aee;
+  color: #ffffff;
+}
+
+/* 리스트 섹션 */
+.post-list-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+  padding: 18px 22px;
+  box-sizing: border-box;
+}
+
+/* 실제 목록 (테이블 느낌) */
+.post-table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.post-row {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 2fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: center;
+  padding: 14px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.post-row:last-child {
+  border-bottom: none;
+}
+
+.post-row:hover {
+  background-color: #f3f4ff;
+}
+
+.post-row-title {
+  font-size: 15px;
+  color: #111827;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-row-meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.post-row-date {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: right;
+}
+
+/* 빈 상태 */
+.empty-text {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.page-btn {
+  min-width: 60px;
+  height: 32px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.page-btn:not(:disabled):hover {
+  background: #e5e7ff;
+  border-color: #7f6aee;
+}
+
+.page-info {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .post-main {
+    padding: 24px 8px 40px;
+  }
+
+  .post-content-wrapper {
+    max-width: 100%;
+  }
+
+  .post-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .intro-text {
+    max-width: 100%;
+  }
+
+  .post-row {
+    grid-template-columns: minmax(0, 3fr);
+    grid-template-rows: auto auto auto;
+    align-items: flex-start;
+  }
+
+  .post-row-meta,
+  .post-row-date {
+    text-align: left;
+  }
+}

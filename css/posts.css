@@ -195,6 +195,42 @@ body {
   color: #9ca3af;
   text-align: center;
 }
+/* 인트로 오른쪽 버튼 묶음 */
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 게시글 목록 버튼 (세컨더리 스타일) */
+.list-btn {
+  width: 120px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.list-btn:hover {
+  background-color: #f3f4ff;
+  color: #4f46e5;
+  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.35);
+  transform: translateY(-1px);
+}
+
+/* 반응형: 버튼 두 개가 줄바꿈 되도록 */
+@media (max-width: 900px) {
+  .intro-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
 
 /* 반응형: 화면이 좁아지면 카드 크기 조금 줄이기 */
 @media (max-width: 900px) {
