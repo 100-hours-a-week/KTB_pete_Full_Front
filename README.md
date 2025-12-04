@@ -59,43 +59,6 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 
 ---
 
-# 📁 **폴더 구조**
-/css
-    common.css
-    header.css
-    posts.css
-    posts-list.css
-    ...
-/html
-    login.html
-    signup.html
-    posts.html
-    posts-list.html
-    post-detail.html
-    post-create.html
-    profile-edit.html
-    password-edit.html
-/js
-    api-fetch.js
-    auth.js
-    header.js
-    posts.js
-    post-detail.js
-    post-detail-api.js
-    post-detail-comments.js
-    post-create.js
-    post-edit.js
-    posts-list.js
-    profile-edit.js
-    signup.js
-    validation.js
-    utils.js
-/img
-
-<br><br>
-
----
-
 # 🔗 **공통 모듈 요약 **
 
 ### **`apiFetch`**
@@ -159,16 +122,8 @@ FormData 기반 이미지 업로드 구현
 <br><br>
 
 🌱 향후 확장 계획
-다크 모드
-
+<br><br>
 검색 기능
-
-PWA 기반 앱화
-
-WebSocket 실시간 댓글
-
-글 임시 저장(Draft) 기능
-
 <br><br>
 
 🎬 시연 이미지 / 영상 삽입 위치
