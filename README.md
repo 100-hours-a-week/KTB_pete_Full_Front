@@ -60,7 +60,6 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 ---
 
 # 📁 **폴더 구조**
-
 /css
     common.css
     header.css
@@ -116,13 +115,6 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 
 ### **`utils` / `validation` / `date-utils`**
 - 토스트, throttle, escapeHtml, 날짜 포맷, 입력 검증 등 공통 유틸  
-
-<br><br>
-
----
-
-# 🔐 **인증 플로우 이미지 삽입 위치**
-
 
 <br><br>
 
