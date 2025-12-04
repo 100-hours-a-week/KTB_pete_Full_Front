@@ -44,14 +44,12 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 # 🧩 **기술 스택**
 
 ### **Frontend**
-- HTML5 / CSS3  
 - Vanilla JavaScript (ES Modules)  
 - Fetch API  
 - FormData 이미지 업로드  
 - LocalStorage 기반 Access Token 관리  
 
 ### **협업 & 개발 환경**
-- Git / GitHub  
 - VSCode  
 - Live Server  
 
