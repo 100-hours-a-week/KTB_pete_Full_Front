@@ -1,4 +1,4 @@
-import { initHeader } from "./header.js";
+import { initHeader, DEFAULT_PROFILE_IMG } from "./header.js";
 import {
   fetchPostDetail,
   togglePostLike,

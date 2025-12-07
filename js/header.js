@@ -1,6 +1,6 @@
 import { apiFetch, API_BASE_URL } from "./api-fetch.js";
 
-const DEFAULT_PROFILE_IMG = "../img/dummy.png";
+export const DEFAULT_PROFILE_IMG = "../img/dummy.png";
 
 function resolveProfileImageUrl(url) {
   if (!url) return DEFAULT_PROFILE_IMG;

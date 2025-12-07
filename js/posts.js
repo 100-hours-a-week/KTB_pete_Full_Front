@@ -1,4 +1,4 @@
-import { initHeader } from "./header.js";
+import { initHeader, DEFAULT_PROFILE_IMG } from "./header.js";
 import { apiFetch, resolveImageUrl } from "./api-fetch.js";
 import { throttle } from "./utils.js";
 import { formatDateTime } from "./date-utils.js";
