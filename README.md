@@ -11,6 +11,13 @@ Backend(Spring Boot) REST API와 연동하여 전체 사용자 경험 흐름을 
 
 ---
 🎬 시연 이미지 / 영상<br>
+종합 <br>
+
+
+https://github.com/user-attachments/assets/190a936c-279c-4277-9e2b-1cdf38ead0f7
+
+
+<br><br>
 회원가입<br>
 
 
