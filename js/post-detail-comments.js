@@ -16,6 +16,7 @@ export function createCommentModule({
   submitBtn,
   commentCountEl,
   formatCount,
+  commentDeleteModalEl,
 }) {
   let loadedComments = [];
   let page = 0;
@@ -236,6 +237,9 @@ export function createCommentModule({
   function handleDeleteClick(comment) {
     deletingCommentId = comment.id;
     // 실제 삭제 모달 open은 바깥(메인 파일)에서 담당
+    if (commentDeleteModalEl) {
+      commentDeleteModalEl.classList.remove("hidden");
+    }
   }
 
   async function confirmDelete() {

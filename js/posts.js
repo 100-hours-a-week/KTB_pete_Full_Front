@@ -32,6 +32,7 @@ let currentPage = 0;
 let pageSize = PAGE_SIZE;
 let isLastPage = false;
 let isLoading = false;
+let currentSort = "latest";
 
 // 캐러셀 관련 상태
 let carouselInitialized = false;
@@ -340,6 +341,14 @@ function appendPosts(posts) {
   setupPostCarousel();
 }
 
+function getSortParams() {
+  if (currentSort === "likes") {
+    return { sort: "likes", dir: "desc" };
+  }
+  // 기본값 최신순
+  return { sort: "createdAt", dir: "desc" };
+}
+
 // ------------------------------
 // 게시글 조회
 // ------------------------------
@@ -353,11 +362,13 @@ async function fetchPosts(page) {
   if (isLoading || isLastPage) return;
   isLoading = true;
 
+  const { sort, dir } = getSortParams();
+
   const params = new URLSearchParams({
     page: String(page),
     size: String(pageSize),
-    sort: "createdAt",
-    dir: "desc",
+    sort,
+    dir,
   });
 
   try {
@@ -416,7 +427,41 @@ function handleScroll() {
 const throttledHandleScroll = throttle(handleScroll, 200);
 postListEl.addEventListener("scroll", throttledHandleScroll);
 */
+// ------------------------------
+// 정렬 버튼 이벤트
+// ------------------------------
+const sortButtons = document.querySelectorAll(".sort-btn");
 
+if (sortButtons && sortButtons.length > 0) {
+  sortButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const sortType = btn.dataset.sort; // 'latest' or 'likes'
+      if (!sortType || sortType === currentSort) return;
+
+      // 상태 변경
+      currentSort = sortType;
+
+      // 버튼 active 토글
+      sortButtons.forEach((b) => {
+        b.classList.toggle("active", b === btn);
+      });
+
+      // 페이징/캐러셀 상태 초기화
+      currentPage = 0;
+      isLastPage = false;
+      if (postListEl) {
+        postListEl.innerHTML = "";
+      }
+
+      // 자동 슬라이드 재설정
+      stopAutoSlide();
+      carouselInitialized = false;
+
+      // 첫 페이지 다시 로딩
+      fetchPosts(0);
+    });
+  });
+}
 // ------------------------------
 // 글쓰기 버튼
 // ------------------------------

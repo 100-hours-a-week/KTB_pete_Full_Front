@@ -72,6 +72,7 @@ const commentModule = createCommentModule({
   submitBtn: submitCommentBtn,
   commentCountEl,
   formatCount,
+  commentDeleteModalEl: commentDeleteModal,
 });
 
 // UI 관련 간단 함수들만 여기에

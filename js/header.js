@@ -90,7 +90,7 @@ export async function initHeader() {
     closeDropdown();
   });
 
-  dropdown.addEventListener("click", (event) => {
+  dropdown.addEventListener("click", async (event) => {
     const item = event.target.closest(".dropdown-item");
     if (!item) return;
 
@@ -101,10 +101,22 @@ export async function initHeader() {
     } else if (action === "change-password") {
       window.location.href = "./password-edit.html";
     } else if (action === "logout") {
-      localStorage.removeItem("accessToken");
-      window.location.href = "./login.html";
+      try {
+        // 백엔드 로그아웃 API 호출
+        await apiFetch("/auth/logout", {
+          method: "POST",
+        });
+      } catch (e) {
+        console.error("로그아웃 API 호출 실패:", e);
+        // 실패해도 클라이언트 쪽 토큰은 정리하고 보내버리는 쪽으로 감
+      } finally {
+        // 클라이언트 토큰 제거 + 로그인 페이지로 이동
+        localStorage.removeItem("accessToken");
+        window.location.href = "./login.html";
+     }
     }
 
     closeDropdown();
   });
+
 }
